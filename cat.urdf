@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<robot name="physics">
+  <link name="front">
+    <visual>
+      <geometry>
+        <cylinder length="0.5" radius="0.1" />
+      </geometry>
+      <origin rpy="1.507 0 0" xyz="0 -0.25 0" />
+      <material name="blue">
+        <color rgba="0 0 .8 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.5" radius="0.1" />
+      </geometry>
+      <origin rpy="1.507 0 0" xyz="0 -0.25 0" />
+    </collision>
+    <inertial>
+      <mass value="10" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+      <origin rpy="1.507 0 0" xyz="0 -0.25 0" />
+    </inertial>
+  </link>
+
+  <link name="back">
+    <visual>
+      <geometry>
+        <cylinder length="0.5" radius="0.1" />
+      </geometry>
+      <origin rpy="-1.507 0 0" xyz="0 0.25 0" />
+      <material name="blue">
+        <color rgba="0 0 .8 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.5" radius="0.1" />
+      </geometry>
+      <origin rpy="-1.507 0 0" xyz="0 0.25 0" />
+    </collision>
+    <inertial>
+      <mass value="10" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+      <origin rpy="-1.507 0 0" xyz="0 0.25 0" />
+    </inertial>
+  </link>
+
+  <joint name="front_to_back" type="revolute">
+    <axis xyz="1 1 1" />
+    <limit effort="1000.0" lower="0.0" upper="1.507" velocity="0.5"/>
+    <parent link="front" />
+    <child link="back" />
+    <origin xyz="0 0 0" />
+  </joint>
+</robot>
