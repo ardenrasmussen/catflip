@@ -1,1 +1,105 @@
-<?xml version="1.0"?><robot name="robocat"><link name="frontCylinder"><visual><geometry><cylinder length="1.0" radius="0.2" /></geometry><origin rpy="-1.5707963267948966 0.0 0.0" xyz="0.0 0.6 0.0" /><material name="gen-mat"><color rgba="1.0 1.0 1.0 1.0" /></material></visual><collision><geometry><cylinder length="1.0" radius="0.2" /></geometry><origin rpy="-1.5707963267948966 0.0 0.0" xyz="0.0 0.6 0.0" /></collision><inertial><mass value="5.0" /><inertia ixx="0.4666666666666666" ixy="0.0" ixz="0.0" iyy="0.4666666666666666" iyz="0.0" izz="0.10000000000000002" /><origin rpy="-1.5707963267948966 0.0 0.0" xyz="0.0 0.6 0.0" /></inertial></link><link name="frontCylinder-leg"><visual><geometry><cylinder length="0.5" radius="0.1" /></geometry><material name="gen-mat"><color rgba="1.0 1.0 1.0 1.0" /></material><origin rpy="0.0 0.0 0.0" xyz="0.0 0.6 0.1" /></visual></link><joint name="frontCylinder-leg-to-frontCylinder" type="fixed"><parent link="frontCylinder" /><child link="frontCylinder-leg" /><origin xyz="0.0 0.6 0.1" /></joint><link name="backCylinder"><visual><geometry><cylinder length="1.0" radius="0.2" /></geometry><origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -0.6 0.0" /><material name="gen-mat"><color rgba="1.0 1.0 1.0 1.0" /></material></visual><collision><geometry><cylinder length="1.0" radius="0.2" /></geometry><origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -0.6 0.0" /></collision><inertial><mass value="5.0" /><inertia ixx="0.4666666666666666" ixy="0.0" ixz="0.0" iyy="0.4666666666666666" iyz="0.0" izz="0.10000000000000002" /><origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -0.6 0.0" /></inertial></link><link name="backCylinder-leg"><visual><geometry><cylinder length="0.5" radius="0.1" /></geometry><material name="gen-mat"><color rgba="1.0 1.0 1.0 1.0" /></material><origin rpy="0.0 0.0 0.0" xyz="0.0 -0.6 0.1" /></visual></link><joint name="backCylinder-leg-to-backCylinder" type="fixed"><parent link="backCylinder" /><child link="backCylinder-leg" /><origin xyz="0.0 -0.6 0.1" /></joint><link name="centerSphere"><visual><geometry><sphere radius="0.1" /></geometry><material name="gen-mat"><color rgba="1.0 1.0 1.0 1.0" /></material><origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0" /></visual></link><joint name="front_to_center" type="revolute"><axis xyz="1 0 0" /><limit effort="0.0" lower="-1.507" upper="1.507" velocity="0.5" /><parent link="centerSphere" /><child link="frontCylinder" /><origin xyz="0 0 0" /></joint><joint name="back_to_center" type="revolute"><axis xyz="0 0 1" /><limit effort="0.0" lower="-1.507" upper="1.507" velocity="0.5" /><parent link="centerSphere" /><child link="backCylinder" /><origin xyz="0 0 0" /></joint></robot>
+
+<?xml version="1.0"?>
+<robot name="robocat">
+    <link name="frontCylinder">
+    <visual>
+        <geometry>
+            <cylinder length="1.0" radius="0.2" />
+        </geometry>
+        <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 0.5 0.0" />
+        <material name="gen-mat">
+            <color rgba="1.0 1.0 1.0 1.0" />
+        </material>
+    </visual>
+    <collision>
+        <geometry>
+            <cylinder length="1.0" radius="0.2" />
+        </geometry>
+        <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 0.5 0.0" />
+    </collision>
+    <inertial>
+        <mass value="5.0" />
+        <inertia ixx="0.4666666666666666" ixy="0.0" ixz="0.0" iyy="0.4666666666666666" iyz="0.0" izz="0.10000000000000002" />
+        <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 0.5 0.0" />
+    </inertial>
+    </link>
+    <link name="frontCylinder-leg">
+    <visual>
+        <geometry>
+            <cylinder length="0.5" radius="0.1" />
+        </geometry>
+        <material name="gen-mat">
+            <color rgba="1.0 1.0 1.0 1.0" />
+        </material>
+        <origin rpy="0.0 0.0 0.0" xyz="0.0 0.5 0.2" />
+    </visual>
+    </link>
+    <joint name="frontCylinder-leg-to-frontCylinder" type="fixed">
+        <parent link="frontCylinder" />
+        <child link="frontCylinder-leg" />
+        <origin xyz="0.0 0.5 0.2" />
+    </joint>
+    <link name="backCylinder">
+    <visual>
+        <geometry>
+            <cylinder length="1.0" radius="0.2" />
+        </geometry>
+        <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -0.5 0.0" />
+        <material name="gen-mat">
+            <color rgba="1.0 1.0 1.0 1.0" />
+        </material>
+    </visual>
+    <collision>
+        <geometry>
+            <cylinder length="1.0" radius="0.2" />
+        </geometry>
+        <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -0.5 0.0" />
+    </collision>
+    <inertial>
+        <mass value="5.0" />
+        <inertia ixx="0.4666666666666666" ixy="0.0" ixz="0.0" iyy="0.4666666666666666" iyz="0.0" izz="0.10000000000000002" />
+        <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -0.5 0.0" />
+    </inertial>
+    </link>
+    <link name="backCylinder-leg">
+    <visual>
+        <geometry>
+            <cylinder length="0.5" radius="0.1" />
+        </geometry>
+        <material name="gen-mat">
+            <color rgba="1.0 1.0 1.0 1.0" />
+        </material>
+        <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.5 0.2" />
+    </visual>
+    </link>
+    <joint name="backCylinder-leg-to-backCylinder" type="fixed">
+        <parent link="backCylinder" />
+        <child link="backCylinder-leg" />
+        <origin xyz="0.0 -0.5 0.2" />
+    </joint>
+    <link name="centerSphere">
+    <visual>
+        <geometry>
+            <sphere radius="0.2" />
+        </geometry>
+        <material name="gen-mat">
+            <color rgba="1.0 1.0 1.0 1.0" />
+        </material>
+        <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0" />
+    </visual>
+    </link>
+    <joint name="front_to_center" type="revolute">
+        <axis xyz="1 0 0" />
+        <limit effort="0.0" lower="-1.507" upper="1.507" velocity="0.5" />
+        <parent link="centerSphere" />
+        <child link="frontCylinder" />
+        <origin xyz="0 0 0" />
+    </joint>
+    <joint name="back_to_center" type="revolute">
+        <axis xyz="0 0 1" />
+        <limit effort="0.0" lower="-1.507" upper="1.507" velocity="0.5" />
+        <parent link="centerSphere" />
+        <child link="backCylinder" />
+        <origin xyz="0 0 0" />
+    </joint>
+</robot>
