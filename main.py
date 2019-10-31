@@ -4,7 +4,7 @@ import time
 import pybullet_data
 import matplotlib.pyplot as plt
 
-d = 5
+d = 50
 g= 9.8
 
 file = open("robocat.urdf", 'w')
@@ -142,7 +142,7 @@ boxId = p.loadURDF("robocat.urdf",cubeStartPos, cubeStartOrientation)
 
 ic = iyy*np.cos(theta/2.0)**2+izz*np.sin(theta/2.0)**2
 cloud = 1 - 2 * izz / (2*ic) * np.sin(theta/2.0)
-t = np.sqrt(2*(d-1)/g) # XXX
+t = np.sqrt(2*(d-2)/g) # XXX
 omega = np.pi/(t*cloud)
 
 print("THETA: {:10f}".format(theta))
@@ -154,7 +154,7 @@ print("OMEGA: {:10f}".format(omega))
 phi = 0.0
 rfps = 240
 dfps = 30
-tmax = 10
+tmax = int(t + 2)
 p.setTimeStep(1.0 / rfps)
 data = []
 for i in range (rfps * tmax):
@@ -164,9 +164,15 @@ for i in range (rfps * tmax):
     pos, orientation = p.getBasePositionAndOrientation(boxId)
     orientation = p.getEulerFromQuaternion(orientation)
     data.append(pos)
-    p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[(np.pi - theta)*np.cos(phi), (np.pi - theta)*np.sin(phi)])
+    tim = i/rfps
+    if (tim < t):
+        p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[(np.pi - theta)*np.cos(phi), (np.pi - theta)*np.sin(phi)])
+        phi += (omega * 1.0 / rfps)
+    else:
+        p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[0,0])
+        phi += (omega * 1.0 / rfps)
     time.sleep(max(1./dfps - (time.time() - start), 0))
-    phi += (omega * 1.0 / rfps)
+
 p.disconnect()
 ox, oy, oz = zip(*data)
 plt.plot(ox, label="$O_x$")

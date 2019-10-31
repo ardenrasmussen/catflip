@@ -3,9 +3,9 @@
   <link name="front">
     <visual>
       <geometry>
-        <cylinder length="0.5" radius="0.1" />
+        <cylinder length="1" radius="0.01" />
       </geometry>
-      <origin rpy="1.507 0 0" xyz="0 -0.25 0" />
+      <origin rpy="0 0 0" xyz="0 -0.25 0" />
       <material name="blue">
         <color rgba="0 0 .8 1" />
       </material>
@@ -26,9 +26,9 @@
   <link name="back">
     <visual>
       <geometry>
-        <cylinder length="0.5" radius="0.1" />
+        <cylinder length="1" radius="0.01" />
       </geometry>
-      <origin rpy="-1.507 0 0" xyz="0 0.25 0" />
+      <origin rpy="0 0 0" xyz="0 0.25 0" />
       <material name="blue">
         <color rgba="0 0 .8 1" />
       </material>
