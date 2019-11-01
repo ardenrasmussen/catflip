@@ -2,10 +2,10 @@ import numpy as np
 import pybullet as p
 import time
 import pybullet_data
-import matplotlib.pyplot as plt
+import matplotlib
 import plotly.graph_objects as go
 
-d = 50
+d = 5
 g = 9.8
 
 file = open("robocat.urdf", 'w')
@@ -170,38 +170,80 @@ omega = np.pi/(t*cloud)*1.2
 
 
 phi = 0.0
-rfps = 256
-dfps = 128
+tim = 0
+rfps = 128
+dfps = 60
 tmax = np.sqrt(2*(d + 5)/g) * 2
 p.setTimeStep(1.0 / rfps)
-# p.applyExternalTorque(boxId, -1, [100000.0, 0.0, 0.0], flags=p.WORLD_FRAME)
 p.changeDynamics(boxId, -1, angularDamping=0.0)
+
+g_slider = p.addUserDebugParameter('gravity', -100, 100, 9.8)
+d_slider = p.addUserDebugParameter('drop_height', 0, 50, 5)
+sim_fps = p.addUserDebugParameter('simulation_fps', 10, 256, 128)
+dis_fps = p.addUserDebugParameter('display_fps', 10, 256, 60)
+
 data = []
-for i in range (int(rfps * tmax)):
+pixels = [500, 500]
+i = 0
+
+while True:
     start = time.time()
     p.stepSimulation()
+
+    if i % 10 == 0:
+        if g != p.readUserDebugParameter(g_slider):
+            g = p.readUserDebugParameter(g_slider)
+            p.setGravity(0.0, 0.0, -g)
+        if rfps != p.readUserDebugParameter(sim_fps):
+            rfps = p.readUserDebugParameter(sim_fps)
+            p.setTimeStep(1.0 / rfps)
+        if dfps != p.readUserDebugParameter(dis_fps):
+            dfps = p.readUserDebugParameter(dis_fps)
+        keys = p.getKeyboardEvents()
+        if ord('r') in keys and keys[ord('r')]&p.KEY_WAS_TRIGGERED:
+            d = p.readUserDebugParameter(d_slider)
+            p.resetBasePositionAndOrientation(boxId, [0,0,d + 5], p.getQuaternionFromEuler([0,0,0]))
+            p.resetBaseVelocity(boxId, [0,0,0], [0,0,0])
+            p.resetJointState(boxId, 0, 0)
+            p.resetJointState(boxId, 1, 0)
+            p.resetJointState(boxId, 2, 0)
+            p.resetJointState(boxId, 3, 0)
+            tim = 0
+            phi = 0
+            i = 0
+            t = np.sqrt(2*d/g) # XXX
+            omega = np.pi/(t*cloud)
+        if ord('q') in keys and keys[ord('q')]&p.KEY_WAS_TRIGGERED:
+            break
 
     pos, ori= p.getBasePositionAndOrientation(boxId)
     ori= p.getEulerFromQuaternion(ori)
     data.append(ori)
-    tim = i/float(rfps)
     if (tim < t):
         p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[(np.pi - theta)*np.cos(phi), (np.pi - theta)*np.sin(phi)], forces=[100,100])
-        phi += (omega * 1.0 / rfps)
     else:
         p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[0,0], forces=[100,100])
-        phi += (omega * 1.0 / rfps)
-    time.sleep(max(1./dfps - (time.time() - start), 0))
+
+    # Image Rendering
+    # viewMatrix = p.computeViewMatrix([5,5,5],[0,0,2], [0,0,1])
+    # projecttionMatrix = p.computeProjectionMatrixFOV(60, pixels[0] / pixels[1], 0.01, 100)
+    # img_arr = p.getCameraImage(pixels[0], pixels[1], viewMatrix, projecttionMatrix, shadow=1, lightDirection=[1,1,1], renderer=p.ER_BULLET_HARDWARE_OPENGL)
+    # np_img_arr = np.reshape(img_arr[2], (img_arr[1], img_arr[0], 4))
+    # np_img_arr = np_img_arr * (1.0 / 255.0)
+    # matplotlib.image.imsave("images/{}.png".format(i), np_img_arr)
+    # print("{}/{}".format(i, int(rfps * tmax)))
+
+    time.sleep(max(1./ dfps - (time.time() - start), 0))
+    tim += 1.0 / rfps
+    phi += (omega * 1.0 / rfps)
+    i+=1
 
 p.disconnect()
+
+# Orientation Plot
 ox, oy, oz = zip(*data)
 fig = go.Figure()
 fig.add_trace(go.Scatter(y=ox, x=np.linspace(0, tmax, len(ox)), mode='lines', name='$O_x$'))
 fig.add_trace(go.Scatter(y=oy, x=np.linspace(0, tmax, len(oy)), mode='lines', name='$O_y$'))
 fig.add_trace(go.Scatter(y=oz, x=np.linspace(0, tmax, len(oz)), mode='lines', name='$O_z$'))
 fig.show()
-# plt.plot(ox, label="$O_x$")
-# plt.plot(oy, label="$O_y$")
-# plt.plot(oz, label="$O_z$")
-# plt.legend()
-# plt.show()
