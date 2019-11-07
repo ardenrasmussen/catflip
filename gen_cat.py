@@ -1,26 +1,38 @@
+import numpy as np
 
+def generate_urdf(args):
+    file = open("robocat.urdf", 'w')
+    ixx = 1/12*args.mass*(args.radius**2+args.length**2)
+    iyy = 1/12*args.mass*(args.radius**2+args.length**2)
+    izz = 1/2*args.mass*args.radius**2
+
+    frx, fry, frz = np.pi / 2.0, 0.0, 0.0
+    ftx, fty, ftz = 0.0, args.length/2.0 + 0, 0.0
+    brx, bry, brz = np.pi / 2.0, 0.0, 0.0
+    btx, bty, btz = 0.0, -args.length/2.0 - 0, 0.0
+    file.write("""
     <?xml version="1.0"?>
     <robot name="robocat">
         <link name="frontCylinder">
         <visual>
             <geometry>
-                <cylinder length="1.0" radius="0.2" />
+                <cylinder length="{length}" radius="{radius}" />
             </geometry>
-            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 0.5 0.0" />
+            <origin rpy="{frx} {fry} {frz}" xyz="{ftx} {fty} {ftz}" />
             <material name="gen-mat">
                 <color rgba="1.0 1.0 1.0 1.0" />
             </material>
         </visual>
         <collision>
             <geometry>
-                <cylinder length="1.0" radius="0.2" />
+                <cylinder length="{length}" radius="{radius}" />
             </geometry>
-            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 0.5 0.0" />
+            <origin rpy="{frx} {fry} {frz}" xyz="{ftx} {fty} {ftz}" />
         </collision>
         <inertial>
-            <mass value="500.0" />
-            <inertia ixx="43.333333333333336" ixy="0.0" ixz="0.0" iyy="43.333333333333336" iyz="0.0" izz="10.000000000000002" />
-            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 0.5 0.0" />
+            <mass value="{mass}" />
+            <inertia ixx="{ixx}" ixy="0.0" ixz="0.0" iyy="{iyy}" iyz="0.0" izz="{izz}" />
+            <origin rpy="{frx} {fry} {frz}" xyz="{ftx} {fty} {ftz}" />
         </inertial>
         </link>
         <link name="frontCylinder-leg">
@@ -31,34 +43,34 @@
             <material name="gen-mat">
                 <color rgba="1.0 1.0 1.0 1.0" />
             </material>
-            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.5 0.2" />
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 {fty} {radius}" />
         </visual>
         </link>
         <joint name="frontCylinder-leg-to-frontCylinder" type="fixed">
             <parent link="frontCylinder" />
             <child link="frontCylinder-leg" />
-            <origin xyz="0.0 0.5 0.2" />
+            <origin xyz="0.0 {fty} {radius}" />
         </joint>
         <link name="backCylinder">
         <visual>
             <geometry>
-                <cylinder length="1.0" radius="0.2" />
+                <cylinder length="{length}" radius="{radius}" />
             </geometry>
-            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -0.5 0.0" />
+            <origin rpy="{brx} {bry} {brz}" xyz="{btx} {bty} {btz}" />
             <material name="gen-mat">
                 <color rgba="1.0 1.0 1.0 1.0" />
             </material>
         </visual>
         <collision>
             <geometry>
-                <cylinder length="1.0" radius="0.2" />
+                <cylinder length="{length}" radius="{radius}" />
             </geometry>
-            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -0.5 0.0" />
+            <origin rpy="{brx} {bry} {brz}" xyz="{btx} {bty} {btz}" />
         </collision>
         <inertial>
-            <mass value="500.0" />
-            <inertia ixx="43.333333333333336" ixy="0.0" ixz="0.0" iyy="43.333333333333336" iyz="0.0" izz="10.000000000000002" />
-            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -0.5 0.0" />
+            <mass value="{mass}" />
+            <inertia ixx="{ixx}" ixy="0.0" ixz="0.0" iyy="{iyy}" iyz="0.0" izz="{izz}" />
+            <origin rpy="{brx} {bry} {brz}" xyz="{btx} {bty} {btz}" />
         </inertial>
         </link>
         <link name="backCylinder-leg">
@@ -69,18 +81,18 @@
             <material name="gen-mat">
                 <color rgba="1.0 1.0 1.0 1.0" />
             </material>
-            <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.5 0.2" />
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 {bty} {radius}" />
         </visual>
         </link>
         <joint name="backCylinder-leg-to-backCylinder" type="fixed">
             <parent link="backCylinder" />
             <child link="backCylinder-leg" />
-            <origin xyz="0.0 -0.5 0.2" />
+            <origin xyz="0.0 {bty} {radius}" />
         </joint>
         <link name="centerSphere">
         <visual>
             <geometry>
-                <sphere radius="0.2" />
+                <sphere radius="{radius}" />
             </geometry>
             <material name="gen-mat">
                 <color rgba="1.0 1.0 1.0 1.0" />
@@ -103,4 +115,5 @@
             <origin xyz="0 0 0" />
         </joint>
     </robot>
-    
+    """.format(mass=args.mass,length=args.length,radius=args.radius,ixx=ixx,iyy=iyy,izz=izz,frx=frx,fry=fry,frz=frz,ftx=ftx,fty=fty,ftz=ftz,brx=brx,bry=bry,brz=brz,btx=btx,bty=bty,btz=btz))
+    file.close()
