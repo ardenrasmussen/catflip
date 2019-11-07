@@ -5,12 +5,14 @@ import pybullet_data
 import matplotlib
 import plotly.graph_objects as go
 
-d = 5
+d = 20
 g = 9.8
 
 file = open("robocat.urdf", 'w')
 
-mass = 50.0
+mass = 1.0
+fa = 1e1
+max_force = 1e1
 length= 1.0
 radius= 0.2
 theta = np.pi / 2.0;
@@ -136,93 +138,86 @@ physicsClient = p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
 p.setGravity(0,0,-g)
 planeId = p.loadURDF("plane.urdf")
-cubeStartPos = [0,0,d+5]
+cubeStartPos = [0,0,d]
 cubeStartOrientation = p.getQuaternionFromEuler([0,0,0])
 boxId = p.loadURDF("robocat.urdf",cubeStartPos, cubeStartOrientation)
 
 # p.changeDynamics(boxId, 1, mass=1.0)
 # p.changeDynamics(boxId, -1, mass=0.0)
 
+# _, _, (ixx, iyy, izz), _, _, _ ,_, _, _, _, _ = p.getDynamicsInfo(boxId, 2)
 ic = iyy*np.cos(theta/2.0)**2+izz*np.sin(theta/2.0)**2
 cloud = 1 - 2 * izz / (2*ic) * np.sin(theta/2.0)
 t = np.sqrt(2*d/g) # XXX
-omega = np.pi/(t*cloud)
-print("IXX: {:10f} IYY: {:10f} IZZ: {:10f}".format(ixx, iyy, izz))
-print("IC: {:10f}".format(ic))
-print("CLOUD: {:10f}".format(cloud))
-print("T: {:10f}".format(t))
-print("OMEGA: {:10f}".format(omega))
-_, _, (ixx, iyy, izz), _, _, _ ,_, _, _, _, _ = p.getDynamicsInfo(boxId, 2)
-ic = iyy*np.cos(theta/2.0)**2+izz*np.sin(theta/2.0)**2
-cloud = 1 - 2 * izz / (2*ic) * np.sin(theta/2.0)
-t = np.sqrt(2*d/g) # XXX
-omega = np.pi/(t*cloud)
-print("IXX: {:10f} IYY: {:10f} IZZ: {:10f}".format(ixx, iyy, izz))
-print("IC: {:10f}".format(ic))
-print("CLOUD: {:10f}".format(cloud))
-print("T: {:10f}".format(t))
-print("OMEGA: {:10f}".format(omega))
+fold_t = 0
+flip_t = 2 * t / 10
+unfold_t = 8 * t / 10
+T = (unfold_t - flip_t)
+omega_0 = np.pi**2/(2*T*cloud)
 
-# ic = np.sqrt(iyy**2*np.cos(theta/2.0)**2+izz**2*np.sin(theta/2.0)**2)
-cloud = 1 - 2 * izz / (2*ic) * np.sin(theta/2.0)
-t = np.sqrt(2*d/g) # XXX
-omega = np.pi/(t*cloud)*1.2
+print("OMEGA_0: {}", omega_0)
 
 
 phi = 0.0
 tim = 0
-rfps = 128
-dfps = 60
+rfps = 1000
+dfps = 128
 tmax = np.sqrt(2*(d + 5)/g) * 2
 p.setTimeStep(1.0 / rfps)
 p.changeDynamics(boxId, -1, angularDamping=0.0)
 
-g_slider = p.addUserDebugParameter('gravity', -100, 100, 9.8)
-d_slider = p.addUserDebugParameter('drop_height', 0, 50, 5)
-sim_fps = p.addUserDebugParameter('simulation_fps', 10, 256, 128)
-dis_fps = p.addUserDebugParameter('display_fps', 10, 256, 60)
+g_slider = p.addUserDebugParameter('gravity', -100, 100, g)
+d_slider = p.addUserDebugParameter('drop_height', 0, 50, d)
+sim_fps = p.addUserDebugParameter('simulation_fps', 10, 10000, rfps)
+dis_fps = p.addUserDebugParameter('display_fps', 10, 10000, dfps)
 
 data = []
 pixels = [500, 500]
 i = 0
-
+state = 0
 while True:
     start = time.time()
     p.stepSimulation()
 
     if i % 10 == 0:
-        if g != p.readUserDebugParameter(g_slider):
-            g = p.readUserDebugParameter(g_slider)
-            p.setGravity(0.0, 0.0, -g)
-        if rfps != p.readUserDebugParameter(sim_fps):
-            rfps = p.readUserDebugParameter(sim_fps)
-            p.setTimeStep(1.0 / rfps)
-        if dfps != p.readUserDebugParameter(dis_fps):
-            dfps = p.readUserDebugParameter(dis_fps)
+    #     if g != p.readUserDebugParameter(g_slider):
+    #         g = p.readUserDebugParameter(g_slider)
+    #         p.setGravity(0.0, 0.0, -g)
+    #     if rfps != p.readUserDebugParameter(sim_fps):
+    #         rfps = p.readUserDebugParameter(sim_fps)
+    #         p.setTimeStep(1.0 / rfps)
+    #     if dfps != p.readUserDebugParameter(dis_fps):
+    #         dfps = p.readUserDebugParameter(dis_fps)
         keys = p.getKeyboardEvents()
-        if ord('r') in keys and keys[ord('r')]&p.KEY_WAS_TRIGGERED:
-            d = p.readUserDebugParameter(d_slider)
-            p.resetBasePositionAndOrientation(boxId, [0,0,d + 5], p.getQuaternionFromEuler([0,0,0]))
-            p.resetBaseVelocity(boxId, [0,0,0], [0,0,0])
-            p.resetJointState(boxId, 0, 0)
-            p.resetJointState(boxId, 1, 0)
-            p.resetJointState(boxId, 2, 0)
-            p.resetJointState(boxId, 3, 0)
-            tim = 0
-            phi = 0
-            i = 0
-            t = np.sqrt(2*d/g) # XXX
-            omega = np.pi/(t*cloud)
+    #     if ord('r') in keys and keys[ord('r')]&p.KEY_WAS_TRIGGERED:
+    #         d = p.readUserDebugParameter(d_slider)
+    #         p.resetBasePositionAndOrientation(boxId, [0,0,d + 5], p.getQuaternionFromEuler([0,0,0]))
+    #         p.resetBaseVelocity(boxId, [0,0,0], [0,0,0])
+    #         p.resetJointState(boxId, 0, 0)
+    #         p.resetJointState(boxId, 1, 0)
+    #         p.resetJointState(boxId, 2, 0)
+    #         p.resetJointState(boxId, 3, 0)
+    #         tim = 0
+    #         phi = 0
+    #         i = 0
+    #         t = np.sqrt(2*d/g) # XXX
+    #         fold_t = 0
+    #         flip_t = 1 * t / 4
+    #         unfold_t = 3 * t / 4
+    #         omega = np.pi/((unfold_t - flip_t)*cloud)*-1.0
         if ord('q') in keys and keys[ord('q')]&p.KEY_WAS_TRIGGERED:
             break
 
     pos, ori= p.getBasePositionAndOrientation(boxId)
     ori= p.getEulerFromQuaternion(ori)
     data.append(ori)
-    if (tim < t):
-        p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[(np.pi - theta)*np.cos(phi), (np.pi - theta)*np.sin(phi)], forces=[100,100])
+    if tim < flip_t:
+        p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[np.pi - theta,0], forces=[fa, fa])
+    elif tim < unfold_t:
+        p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[(np.pi - theta)*np.cos(phi), (np.pi - theta)*np.sin(phi)], forces=[max_force, max_force])
+        phi += (omega_0*np.sin(np.pi/T*(tim-flip_t)) * 1.0 / rfps)
     else:
-        p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[0,0], forces=[100,100])
+        p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[0,0], forces=[fa, fa])
 
     # Image Rendering
     # viewMatrix = p.computeViewMatrix([5,5,5],[0,0,2], [0,0,1])
@@ -235,7 +230,6 @@ while True:
 
     time.sleep(max(1./ dfps - (time.time() - start), 0))
     tim += 1.0 / rfps
-    phi += (omega * 1.0 / rfps)
     i+=1
 
 p.disconnect()
@@ -243,7 +237,7 @@ p.disconnect()
 # Orientation Plot
 ox, oy, oz = zip(*data)
 fig = go.Figure()
-fig.add_trace(go.Scatter(y=ox, x=np.linspace(0, tmax, len(ox)), mode='lines', name='$O_x$'))
-fig.add_trace(go.Scatter(y=oy, x=np.linspace(0, tmax, len(oy)), mode='lines', name='$O_y$'))
-fig.add_trace(go.Scatter(y=oz, x=np.linspace(0, tmax, len(oz)), mode='lines', name='$O_z$'))
+fig.add_trace(go.Scatter(y=ox, x=np.linspace(0, tim, len(ox)), mode='lines', name='$O_x$'))
+fig.add_trace(go.Scatter(y=oy, x=np.linspace(0, tim, len(oy)), mode='lines', name='$O_y$'))
+fig.add_trace(go.Scatter(y=oz, x=np.linspace(0, tim, len(oz)), mode='lines', name='$O_z$'))
 fig.show()

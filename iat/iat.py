@@ -60,7 +60,7 @@ data=[]
 for i in range (rfps * tmax):
     start = time.time()
     pos, orientation = p.getBasePositionAndOrientation(boxId)
-    # orientation = p.getEulerFromQuaternion(orientation)
+    orientation = p.getEulerFromQuaternion(orientation)
     data.append(orientation)
     p.stepSimulation()
 
