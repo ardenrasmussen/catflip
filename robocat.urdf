@@ -4,23 +4,23 @@
         <link name="frontCylinder">
         <visual>
             <geometry>
-                <cylinder length="1.0" radius="0.2" />
+                <cylinder length="2.0" radius="0.2" />
             </geometry>
-            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 0.5 0.0" />
+            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 1.0 0.0" />
             <material name="gen-mat">
                 <color rgba="1.0 1.0 1.0 1.0" />
             </material>
         </visual>
         <collision>
             <geometry>
-                <cylinder length="1.0" radius="0.2" />
+                <cylinder length="2.0" radius="0.2" />
             </geometry>
-            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 0.5 0.0" />
+            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 1.0 0.0" />
         </collision>
         <inertial>
             <mass value="500.0" />
-            <inertia ixx="43.333333333333336" ixy="0.0" ixz="0.0" iyy="43.333333333333336" iyz="0.0" izz="10.000000000000002" />
-            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 0.5 0.0" />
+            <inertia ixx="168.33333333333331" ixy="0.0" ixz="0.0" iyy="168.33333333333331" iyz="0.0" izz="10.000000000000002" />
+            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 1.0 0.0" />
         </inertial>
         </link>
         <link name="frontCylinder-leg">
@@ -31,34 +31,34 @@
             <material name="gen-mat">
                 <color rgba="1.0 1.0 1.0 1.0" />
             </material>
-            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.5 0.2" />
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 1.0 0.2" />
         </visual>
         </link>
         <joint name="frontCylinder-leg-to-frontCylinder" type="fixed">
             <parent link="frontCylinder" />
             <child link="frontCylinder-leg" />
-            <origin xyz="0.0 0.5 0.2" />
+            <origin xyz="0.0 1.0 0.2" />
         </joint>
         <link name="backCylinder">
         <visual>
             <geometry>
-                <cylinder length="1.0" radius="0.2" />
+                <cylinder length="2.0" radius="0.2" />
             </geometry>
-            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -0.5 0.0" />
+            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -1.0 0.0" />
             <material name="gen-mat">
                 <color rgba="1.0 1.0 1.0 1.0" />
             </material>
         </visual>
         <collision>
             <geometry>
-                <cylinder length="1.0" radius="0.2" />
+                <cylinder length="2.0" radius="0.2" />
             </geometry>
-            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -0.5 0.0" />
+            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -1.0 0.0" />
         </collision>
         <inertial>
             <mass value="500.0" />
-            <inertia ixx="43.333333333333336" ixy="0.0" ixz="0.0" iyy="43.333333333333336" iyz="0.0" izz="10.000000000000002" />
-            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -0.5 0.0" />
+            <inertia ixx="168.33333333333331" ixy="0.0" ixz="0.0" iyy="168.33333333333331" iyz="0.0" izz="10.000000000000002" />
+            <origin rpy="1.5707963267948966 0.0 0.0" xyz="0.0 -1.0 0.0" />
         </inertial>
         </link>
         <link name="backCylinder-leg">
@@ -69,13 +69,13 @@
             <material name="gen-mat">
                 <color rgba="1.0 1.0 1.0 1.0" />
             </material>
-            <origin rpy="0.0 0.0 0.0" xyz="0.0 -0.5 0.2" />
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 -1.0 0.2" />
         </visual>
         </link>
         <joint name="backCylinder-leg-to-backCylinder" type="fixed">
             <parent link="backCylinder" />
             <child link="backCylinder-leg" />
-            <origin xyz="0.0 -0.5 0.2" />
+            <origin xyz="0.0 -1.0 0.2" />
         </joint>
         <link name="centerSphere">
         <visual>

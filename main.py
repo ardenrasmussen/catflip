@@ -14,12 +14,12 @@ fa = 1e1
 max_force = 1e1
 
 argsDict = {
-    'd': 10,
-    'g': 9.8,
-    'mass': 500.0,
-    'length': 1.0,
-    'radius': 0.2,
-    'theta': np.pi * 0.8
+    'd': 10, # GOOD
+    'g': 9.8, # GOOD
+    'mass': 500.0, # GOOD
+    'length': 2.0, # NOT GOOD
+    'radius': 0.2, # NOT GOOD
+    'theta': np.pi * 0.5 # NOT GOOD
 }
 args = SimpleNamespace(**argsDict)
 
