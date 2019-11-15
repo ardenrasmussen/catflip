@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1573797122 "writeup.tex" "writeup.pdf" "writeup" 1573797122
+["pdflatex"] 1573799850 "writeup.tex" "writeup.pdf" "writeup" 1573799850
   "/etc/texmf/web2c/texmf.cnf" 1516347471 1101 af7716885e081ab43982cab7b4672c1a ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
@@ -45,9 +45,9 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1503343927 31343 93828589fb0cea665e553ee5a17ad2d4 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1516347612 1863403 f3ff9a4253bcb5fb9a9baaf0c572cb01 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1539436995 3854999 280f03449943b61251dfc2407b56e294 ""
-  "writeup.aux" 1573797122 280 cca3860049b20f91edcfb0c0292fbb33 ""
-  "writeup.tex" 1573797122 4508 30b429882b5a2b2c5b35711f0ae7c16d ""
+  "writeup.aux" 1573799850 350 006eb1d9ad406d63756715287a106713 ""
+  "writeup.tex" 1573799848 4962 350a32c22843cfcfbb5cccbf17835b18 ""
   (generated)
+  "writeup.pdf"
   "writeup.aux"
   "writeup.log"
-  "writeup.pdf"
