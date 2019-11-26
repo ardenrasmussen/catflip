@@ -5,6 +5,7 @@ import time
 from types import SimpleNamespace
 import pybullet_data
 import matplotlib
+import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
@@ -30,7 +31,6 @@ parser.add_argument('-l','--length', dest='length', type=float, default=1.0)
 parser.add_argument('-r','--radius', dest='radius', type=float,default=0.2)
 parser.add_argument('-t','--theta', dest= 'theta', type=float,default=np.pi * 0.5)
 args = parser.parse_args()
-# args = SimpleNamespace(**argsDict)
 
 gen_cat.generate_urdf(args)
 
@@ -68,15 +68,10 @@ dfps = 256
 p.setTimeStep(1.0 / rfps)
 p.changeDynamics(boxId, -1, angularDamping=0.0)
 
-# m, _, I_dag, _, _, _, _, _, _
 for i in range(0, 4, 2):
     res = p.getDynamicsInfo(boxId, i)
     I_dag = res[2]
-    # print("{}:: IXX: {}={} IYY: {}={} IZZ: {}={}".format(i, ixx, I_dag[0], iyy, I_dag[1], izz, I_dag[2]))
     p.changeDynamics(boxId, i, localInertiaDiagonal=[ixx, iyy, izz])
-    # res = p.getDynamicsInfo(boxId, i)
-    # I_dag = res[2]
-    # print("{}:: IXX: {}={} IYY: {}={} IZZ: {}={}".format(i, ixx, I_dag[0], iyy, I_dag[1], izz, I_dag[2]))
 p.changeDynamics(boxId, -1, angularDamping=0, linearDamping=0)
 p.changeDynamics(boxId, 0, angularDamping=0, linearDamping=0)
 p.changeDynamics(boxId, 1, angularDamping=0, linearDamping=0)
@@ -87,16 +82,6 @@ p.changeDynamics(boxId, 4, angularDamping=0, linearDamping=0)
 max_force = 8*omega_0**2*(1/4*args.mass*args.radius**2 + 1/3*args.mass*args.length**2)
 fa = 2.0 * (np.pi/dtfold)**2*((np.pi-args.theta)/2)*(1/4*args.mass*args.radius**2 + 1/3*args.mass*args.length**2)
 
-
-print("FORCE", max_force)
-
-def calc_momentum():
-    # _, omega_c = p.getBaseVelocity(boxId)
-    # print(omega_c)
-    # _, _, _, _, _, _, _, omega_1 = p.getLinkState(boxId, 0, computeLinkVelocity=True)
-    # _, _, _, _, _, _, _, omega_2 = p.getLinkState(boxId, 2, computeLinkVelocity=True)
-    # print(omega_1, omega_2)
-    return 0.0
 
 data = []
 momentum = []
@@ -129,6 +114,16 @@ while True:
             tx = j0[0]
             ty = j1[0]
         p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[tx/2*(1+np.cos(np.pi/dtunfold*(tim-unfold_t))),ty/2*(1+np.cos(np.pi/dtunfold*(tim-unfold_t)))], forces=[fa, fa])
+
+    # Image Rendering
+    if i % 10 == 0:
+        frame = i / 10
+        viewMatrix = p.computeViewMatrix([5,5,5],[0,0,2], [0,0,1])
+        projecttionMatrix = p.computeProjectionMatrixFOV(60, pixels[0] / pixels[1], 0.01, 100)
+        img_arr = p.getCameraImage(pixels[0], pixels[1], viewMatrix, projecttionMatrix, shadow=1, lightDirection=[1,1,1], renderer=p.ER_BULLET_HARDWARE_OPENGL)
+        np_img_arr = np.reshape(img_arr[2], (img_arr[1], img_arr[0], 4))
+        np_img_arr = np_img_arr * (1.0 / 255.0)
+        plt.imsave("images/{}.png".format(frame), np_img_arr)
 
     time.sleep(max(1./ dfps - (time.time() - start), 0))
     tim += 1.0 / rfps
