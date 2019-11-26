@@ -4,6 +4,7 @@ import time
 from types import SimpleNamespace
 import pybullet_data
 import matplotlib
+import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
@@ -17,7 +18,7 @@ argsDict = {
     'd': 10, # GOOD
     'g': 9.8, # GOOD
     'mass': 500.0, # GOOD
-    'length': 2.0, # NOT GOOD
+    'length': 1.0, # NOT GOOD
     'radius': 0.2, # NOT GOOD
     'theta': np.pi * 0.5 # NOT GOOD
 }
@@ -53,7 +54,7 @@ print("OMEGA_0: {}", omega_0)
 phi = 0.0
 tim = 0
 rfps = 1000
-dfps = 128
+dfps = 256
 p.setTimeStep(1.0 / rfps)
 p.changeDynamics(boxId, -1, angularDamping=0.0)
 
@@ -85,6 +86,16 @@ while True:
         phi += (omega(tim-flip_t) * 1.0 / rfps)
     else:
         p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[0,0], forces=[fa, fa])
+
+    # Image Rendering
+    if i % 10 == 0:
+        frame = i / 10
+        viewMatrix = p.computeViewMatrix([5,5,5],[0,0,2], [0,0,1])
+        projecttionMatrix = p.computeProjectionMatrixFOV(60, pixels[0] / pixels[1], 0.01, 100)
+        img_arr = p.getCameraImage(pixels[0], pixels[1], viewMatrix, projecttionMatrix, shadow=1, lightDirection=[1,1,1], renderer=p.ER_BULLET_HARDWARE_OPENGL)
+        np_img_arr = np.reshape(img_arr[2], (img_arr[1], img_arr[0], 4))
+        np_img_arr = np_img_arr * (1.0 / 255.0)
+        plt.imsave("images/{}.png".format(frame), np_img_arr)
 
     time.sleep(max(1./ dfps - (time.time() - start), 0))
     tim += 1.0 / rfps
