@@ -102,14 +102,14 @@ def generate_urdf(args):
         </link>
         <joint name="front_to_center" type="revolute">
             <axis xyz="1 0 0" />
-            <limit effort="0.0" lower="-3.1415" upper="3.1415" velocity="0.5" />
+            <limit effort="0.0" lower="-3.1415" upper="3.1415" velocity="1000.0" />
             <parent link="centerSphere" />
             <child link="frontCylinder" />
             <origin xyz="0 0 0" />
         </joint>
         <joint name="back_to_center" type="revolute">
             <axis xyz="0 0 1" />
-            <limit effort="0.0" lower="-3.1415" upper="3.1415" velocity="0.5" />
+            <limit effort="0.0" lower="-3.1415" upper="3.1415" velocity="1000.0" />
             <parent link="centerSphere" />
             <child link="backCylinder" />
             <origin xyz="0 0 0" />

@@ -1,0 +1,39 @@
+\documentclass[tikz,border=10pt]{standalone}
+\usetikzlibrary{calc,patterns,angles,quotes,positioning,arrows}
+
+\begin{document}
+\begin{figure}[htpb]
+ \begin{center}
+  \begin{tikzpicture}[scale=1, transform shape]
+    \begin{scope}[shift={(-0.4,0.0)}, rotate=45]
+      \draw (0.4,0) -- (0.4,2.0) arc (360:180:0.4cm and 0.1cm) -- (-0.4,0) arc
+      (180:360:0.4cm and 0.1cm);
+      \draw (-0.4,2.0) -- (-0.4,0) arc (180:360:0.4cm and 0.1cm) -- (0.4,2.0) ++
+      (-0.4,0) circle (0.4cm and 0.1cm);
+      \draw[densely dashed] (-0.4,0) arc (180:0:0.4cm and 0.1cm);
+
+      \draw[<->] (-0.6,0.0) -- node[below,midpoint,rotate=-45] {$l$} (-0.6, 2.0);
+      \draw[<->] (0.0,2.0) -- node[above,midpoint,rotate=-45] {$r$} (0.4,2.0);
+
+      \node[rotate=-45] at (0.0, 1.0) {$A$};
+    \end{scope}
+    \begin{scope}[shift={(0.4,0.0)}, rotate=-45]
+      \draw (0.4,0) -- (0.4,2.0) arc (360:180:0.4cm and 0.1cm) -- (-0.4,0) arc
+      (180:360:0.4cm and 0.1cm);
+      \draw (-0.4,2.0) -- (-0.4,0) arc (180:360:0.4cm and 0.1cm) -- (0.4,2.0) ++
+      (-0.4,0) circle (0.4cm and 0.1cm);
+      \draw[densely dashed] (-0.4,0) arc (180:0:0.4cm and 0.1cm);
+
+      \draw[<->] (0.6,0.0) -- node[below,midpoint,rotate=45] {$l$} (0.6, 2.0);
+      \draw[<->] (-0.0,2.0) -- node[above,midpoint,rotate=45] {$r$} (-0.4,2.0);
+
+      \node[rotate=45] at (0.0, 1.0) {$B$};
+    \end{scope}
+    \coordinate (A) at (-1,1);
+    \coordinate (B) at (1,1);
+    \coordinate (O) at (0,0.4);
+    \pic[draw, <->, "$\theta$",angle eccentricity=1.5]{angle=B--O--A};
+  \end{tikzpicture}
+   \end{center}
+\end{figure}
+\end{document}

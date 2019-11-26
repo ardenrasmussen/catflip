@@ -1,10 +1,10 @@
 
 <?xml version="1.0"?>
 <robot name="physics">
-  <link name="back">
+  <link name="handle">
     <visual>
       <geometry>
-        <box size="1.0 0.5 0.1" />
+        <cylinder radius="0.2" length="1.6" />
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0" />
       <material name="blue">
@@ -13,14 +13,41 @@
     </visual>
     <collision>
       <geometry>
-        <box size="1.0 0.5 0.1" />
+        <cylinder radius="0.2" length="1.6" />
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0" />
     </collision>
     <inertial>
       <mass value="1.0" />
-      <inertia ixx="0.021666666666666667" ixy="0.0" ixz="0.0" iyy="0.08416666666666667" iyz="0.0" izz="0.10416666666666666"/>
+      <inertia ixx="0.22333333333333338" ixy="0.0" ixz="0.0" iyy="0.22333333333333338" iyz="0.0" izz="0.020000000000000004"/>
       <origin rpy="0 0 0" xyz="0 0 0" />
     </inertial>
   </link>
+  <link name="bar">
+    <visual>
+      <geometry>
+        <cylinder radius="0.2" length="1.0" />
+      </geometry>
+      <origin rpy="1.5707 0 0" xyz="0 0.5 0" />
+      <material name="blue">
+        <color rgba="1.0 1.0 1.0 1" />
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="0.2" length="1.0" />
+      </geometry>
+      <origin rpy="1.5707 0 0" xyz="0 0.5 0" />
+    </collision>
+    <inertial>
+      <mass value="1.0" />
+      <inertia ixx="0.09333333333333334" ixy="0.0" ixz="0.0" iyy="0.09333333333333334" iyz="0.0" izz="0.020000000000000004"/>
+      <origin rpy="1.5707 0 0" xyz="0 0.5 0" />
+    </inertial>
+  </link>
+  <joint name="joint" type="fixed">
+    <parent link="handle" />
+    <child link="bar" />
+    <origin xyz="0 0 0" />
+  </joint>
 </robot>

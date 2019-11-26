@@ -2,12 +2,21 @@
 
 \usepackage{amsmath}
 \usepackage{amsthm}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{calc,patterns,angles,quotes,positioning}
+
 
 \theoremstyle{definition}
 \newtheorem{theorem}{Theorem}
 \newtheorem{claim}[theorem]{Claim}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{corollary}[theorem]{Corollary}
+
+\newcommand{\AxisRotator}[1][rotate=0]{\tikz[x=0.25cm,y=0.60cm,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);}
+\newcommand{\AxisRotatorUnder}[1][rotate=0]{\tikz[x=0.25cm,y=0.60cm,-stealth,#1]
+  \draw (0,0) arc (150:-150:1 and 1);}
+
 
 \begin{document}
     \title{Cat Flipping}
@@ -91,5 +100,7 @@
     
 \end{proof}
 Again, note the above argument is generalizable given the principle axes.
+
+\include{figures/model}
 
 \end{document}

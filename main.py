@@ -1,3 +1,4 @@
+import argparse
 import numpy as np
 import pybullet as p
 import time
@@ -17,11 +18,19 @@ argsDict = {
     'd': 10, # GOOD
     'g': 9.8, # GOOD
     'mass': 500.0, # GOOD
-    'length': 2.0, # NOT GOOD
-    'radius': 0.2, # NOT GOOD
-    'theta': np.pi * 0.5 # NOT GOOD
+    'length': 1.0, # GOOD
+    'radius': 0.2, # GOOD
+    'theta': np.pi * 0.8 # GOOD
 }
-args = SimpleNamespace(**argsDict)
+parser = argparse.ArgumentParser()
+parser.add_argument('-d', '--distance', dest='d', type=float, default=10.0)
+parser.add_argument('-g', '--gravity', dest='g', type=float, default=9.8)
+parser.add_argument('-m', '--mass', dest='mass', type=float, default=500.0)
+parser.add_argument('-l','--length', dest='length', type=float, default=1.0)
+parser.add_argument('-r','--radius', dest='radius', type=float,default=0.2)
+parser.add_argument('-t','--theta', dest= 'theta', type=float,default=np.pi * 0.5)
+args = parser.parse_args()
+# args = SimpleNamespace(**argsDict)
 
 gen_cat.generate_urdf(args)
 
@@ -43,8 +52,10 @@ t = np.sqrt(2*args.d/args.g)
 fold_t = 0
 flip_t = 2 * t / 10
 unfold_t = 8 * t / 10
+dtfold = (flip_t-fold_t)
+dtunfold = (t - unfold_t)
 T = (unfold_t - flip_t)
-omega_0 = np.pi/(T*cloud)
+omega_0 = np.pi/(T*cloud) * 1.1
 omega = lambda t: omega_0*(-np.cos(np.pi/T*t)+1)
 
 print("OMEGA_0: {}", omega_0)
@@ -53,19 +64,46 @@ print("OMEGA_0: {}", omega_0)
 phi = 0.0
 tim = 0
 rfps = 1000
-dfps = 128
+dfps = 256
 p.setTimeStep(1.0 / rfps)
 p.changeDynamics(boxId, -1, angularDamping=0.0)
 
-max_force = 4*omega_0**2*(1/3*args.mass*args.length**2)
-fa = max_force
+# m, _, I_dag, _, _, _, _, _, _
+for i in range(0, 4, 2):
+    res = p.getDynamicsInfo(boxId, i)
+    I_dag = res[2]
+    # print("{}:: IXX: {}={} IYY: {}={} IZZ: {}={}".format(i, ixx, I_dag[0], iyy, I_dag[1], izz, I_dag[2]))
+    p.changeDynamics(boxId, i, localInertiaDiagonal=[ixx, iyy, izz])
+    # res = p.getDynamicsInfo(boxId, i)
+    # I_dag = res[2]
+    # print("{}:: IXX: {}={} IYY: {}={} IZZ: {}={}".format(i, ixx, I_dag[0], iyy, I_dag[1], izz, I_dag[2]))
+p.changeDynamics(boxId, -1, angularDamping=0, linearDamping=0)
+p.changeDynamics(boxId, 0, angularDamping=0, linearDamping=0)
+p.changeDynamics(boxId, 1, angularDamping=0, linearDamping=0)
+p.changeDynamics(boxId, 2, angularDamping=0, linearDamping=0)
+p.changeDynamics(boxId, 3, angularDamping=0, linearDamping=0)
+p.changeDynamics(boxId, 4, angularDamping=0, linearDamping=0)
+
+max_force = 8*omega_0**2*(1/4*args.mass*args.radius**2 + 1/3*args.mass*args.length**2)
+fa = 2.0 * (np.pi/dtfold)**2*((np.pi-args.theta)/2)*(1/4*args.mass*args.radius**2 + 1/3*args.mass*args.length**2)
+
 
 print("FORCE", max_force)
 
+def calc_momentum():
+    # _, omega_c = p.getBaseVelocity(boxId)
+    # print(omega_c)
+    # _, _, _, _, _, _, _, omega_1 = p.getLinkState(boxId, 0, computeLinkVelocity=True)
+    # _, _, _, _, _, _, _, omega_2 = p.getLinkState(boxId, 2, computeLinkVelocity=True)
+    # print(omega_1, omega_2)
+    return 0.0
+
 data = []
+momentum = []
 pixels = [500, 500]
 i = 0
 state = 0
+tx, ty = None, None
 while True:
     start = time.time()
     p.stepSimulation()
@@ -78,13 +116,19 @@ while True:
     pos, ori= p.getBasePositionAndOrientation(boxId)
     ori= p.getEulerFromQuaternion(ori)
     data.append(ori)
+    momentum.append(calc_momentum())
     if tim < flip_t:
-        p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[np.pi - args.theta,0], forces=[fa, fa])
+        p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[(np.pi - args.theta)/2*(1-np.cos(np.pi/dtfold*(tim-fold_t))),0], forces=[fa, fa])
     elif tim < unfold_t:
         p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[(np.pi - args.theta)*np.cos(phi), (np.pi - args.theta)*np.sin(phi)], forces=[max_force, max_force])
         phi += (omega(tim-flip_t) * 1.0 / rfps)
-    else:
-        p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[0,0], forces=[fa, fa])
+    elif tim < t:
+        if tx is None:
+            j0 = p.getJointState(boxId, 0)
+            j1 = p.getJointState(boxId, 2)
+            tx = j0[0]
+            ty = j1[0]
+        p.setJointMotorControlArray(boxId, [0,2], p.POSITION_CONTROL, targetPositions=[tx/2*(1+np.cos(np.pi/dtunfold*(tim-unfold_t))),ty/2*(1+np.cos(np.pi/dtunfold*(tim-unfold_t)))], forces=[fa, fa])
 
     time.sleep(max(1./ dfps - (time.time() - start), 0))
     tim += 1.0 / rfps
@@ -98,4 +142,5 @@ fig = go.Figure()
 fig.add_trace(go.Scatter(y=ox, x=np.linspace(0, tim, len(ox)), mode='lines', name='$O_x$'))
 fig.add_trace(go.Scatter(y=oy, x=np.linspace(0, tim, len(oy)), mode='lines', name='$O_y$'))
 fig.add_trace(go.Scatter(y=oz, x=np.linspace(0, tim, len(oz)), mode='lines', name='$O_z$'))
+fig.add_trace(go.Scatter(y=momentum, x=np.linspace(0, tim, len(momentum)), mode='lines', name='$L$'))
 fig.show()
