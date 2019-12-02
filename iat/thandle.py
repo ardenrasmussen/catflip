@@ -8,7 +8,7 @@ file = open("box.urdf", 'w')
 
 mh = 1.0
 rh = 0.2
-lh = 1.6
+lh = 2.0
 
 ixh = 1/12.0*mh*(3*rh**2+lh**2)
 iyh = 1/12.0*mh*(3*rh**2+lh**2)
@@ -84,7 +84,7 @@ p.setGravity(0,0,0)
 cubeStartPos = [0,0,0]
 cubeStartOrientation = p.getQuaternionFromEuler([0,0,0])
 boxId = p.loadURDF("box.urdf",cubeStartPos, cubeStartOrientation)
-p.applyExternalTorque(boxId, -1, [0.0, 500.0, 0.05], flags=p.WORLD_FRAME)
+p.applyExternalTorque(boxId, -1, [0.0, 2000.0, 1], flags=p.WORLD_FRAME)
 p.changeDynamics(boxId, -1, angularDamping=0.0)
 p.changeDynamics(boxId, 1, angularDamping=0.0)
 p.changeDynamics(boxId, 2, angularDamping=0.0)
@@ -94,6 +94,7 @@ dfps = 256
 tmax = 1000
 p.setTimeStep(1.0 / rfps)
 data=[]
+pixels = [500, 500]
 for i in range (rfps * tmax):
     start = time.time()
     pos, orientation = p.getBasePositionAndOrientation(boxId)
@@ -101,6 +102,14 @@ for i in range (rfps * tmax):
     data.append(orientation)
     p.stepSimulation()
 
+    if i % 1 == 0:
+        frame = int(i / 10)
+        viewMatrix = p.computeViewMatrix([2,2,2],[0,0,0], [0,0,1])
+        projecttionMatrix = p.computeProjectionMatrixFOV(60, pixels[0] / pixels[1], 0.01, 100)
+        img_arr = p.getCameraImage(pixels[0], pixels[1], viewMatrix, projecttionMatrix, shadow=1, lightDirection=[1,1,1], renderer=p.ER_BULLET_HARDWARE_OPENGL)
+        np_img_arr = np.reshape(img_arr[2], (img_arr[1], img_arr[0], 4))
+        np_img_arr = np_img_arr * (1.0 / 255.0)
+        plt.imsave("images/{}.png".format(frame), np_img_arr)
     time.sleep(max(1./dfps - (time.time() - start), 0))
 p.disconnect()
 plt.plot(data)

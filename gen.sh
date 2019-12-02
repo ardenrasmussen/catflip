@@ -1,3 +1,6 @@
 #!/bin/bash
 
-ffmpeg -i %d.png video.gif
+name=$1
+ext=$2
+
+ffmpeg -i $name/%d.png $name.$ext

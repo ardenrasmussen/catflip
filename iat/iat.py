@@ -57,14 +57,23 @@ dfps = 256
 tmax = 10
 p.setTimeStep(1.0 / rfps)
 data=[]
+pixels = [500, 500]
 for i in range (rfps * tmax):
     start = time.time()
     pos, orientation = p.getBasePositionAndOrientation(boxId)
     orientation = p.getEulerFromQuaternion(orientation)
     data.append(orientation)
     p.stepSimulation()
+    if i % 10 == 0:
+        frame = int(i / 10)
+        viewMatrix = p.computeViewMatrix([1,1,1],[0,0,0], [0,0,1])
+        projecttionMatrix = p.computeProjectionMatrixFOV(60, pixels[0] / pixels[1], 0.01, 100)
+        img_arr = p.getCameraImage(pixels[0], pixels[1], viewMatrix, projecttionMatrix, shadow=1, lightDirection=[1,1,1], renderer=p.ER_BULLET_HARDWARE_OPENGL)
+        np_img_arr = np.reshape(img_arr[2], (img_arr[1], img_arr[0], 4))
+        np_img_arr = np_img_arr * (1.0 / 255.0)
+        plt.imsave("images/{}.png".format(frame), np_img_arr)
 
     time.sleep(max(1./dfps - (time.time() - start), 0))
 p.disconnect()
-plt.plot(data)
-plt.show()
+# plt.plot(data)
+# plt.show()
