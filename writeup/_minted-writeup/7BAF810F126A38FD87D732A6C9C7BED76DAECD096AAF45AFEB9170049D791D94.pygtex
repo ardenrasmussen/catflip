@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+  \PYG{k+kn}{import} \PYG{n+nn}{pybullet} \PYG{k+kn}{as} \PYG{n+nn}{p}
+  \PYG{n}{physicsClient} \PYG{o}{=} \PYG{n}{p}\PYG{o}{.}\PYG{n}{connect}\PYG{p}{(}\PYG{n}{p}\PYG{o}{.}\PYG{n}{GUI}\PYG{p}{)}
+  \PYG{n}{p}\PYG{o}{.}\PYG{n}{setAdditionalSearchPath}\PYG{p}{(}\PYG{n}{pybullet\PYGZus{}data}\PYG{o}{.}\PYG{n}{getDataPath}\PYG{p}{())}
+\end{Verbatim}

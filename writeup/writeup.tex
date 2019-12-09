@@ -4,6 +4,7 @@
 \usepackage{amsthm}
 \usepackage{tikz}
 \usepackage{tikz-3dplot}
+\usepackage{minted}
 \usetikzlibrary{calc,patterns,angles,quotes,positioning}
 
 
@@ -113,5 +114,58 @@ In particular, if $A$ and $B$ are two solid cylinders of equal density with leng
 \end{equation}
 
 \section{????}
+
+\section{Simulation}%
+\label{sec:simulation}
+
+To verify our computations, we constructed a software simulation, that would be
+easily configurable, to allow rapid development. For the simulation we chose to
+use the \texttt{Python} programming language, and to make use of the
+\texttt{pyBullet} physics simulator. \texttt{pyBullet} is provided using
+python's integrated package manager \texttt{pip}.
+
+\subsection{URDF File Format}%
+\label{sub:urdf_file_format}
+
+\texttt{pyBullet} makes use of the \texttt{URDF} file format, so all models in
+the simulation must be loaded from a urdf file. This format has some specific
+constraints that are explained here, and the cat model that we used is
+included. The urdf file type is a subset of xml.
+
+\subsection{Simulation Setup}%
+\label{sub:simulation_setup}
+
+\texttt{pyBullet} provides all of the physics simulations that are necessary
+for most common applications, but first it must be initialized in the code. To
+do this one must use the following commands before any physics simulation is
+possible.
+\begin{minted}{python}
+  import pybullet as p
+  physicsClient = p.connect(p.GUI)
+  p.setAdditionalSearchPath(pybullet_data.getDataPath())
+\end{minted}
+These commands initialize the graphical interface for the simulation, and
+includes a path for some standard \texttt{pyBullet} models.
+
+The next step is to set global constants that are persistent for the entirety
+of the simulation. In this case we will only set the gravitational constant.
+\begin{minted}{python}
+   p.setGravity(0,0,-9.8)
+\end{minted}
+This function sets the gravitational force in the $x$, $y$, and $z$ directions.
+
+The final step before beginning the simulation is to load any models that will
+be used in the simulation. For our purposes, we load the standard
+\texttt{plane.urdf}, and we load our constructed \texttt{cat.urdf}.
+\begin{minted}{python}
+  planeId = p.loadURDF("plane.urdf")
+  startPos = [0,0,10]
+  startOrientation = p.getQuaternionFromEuler([0,0,0])
+  boxId = p.loadURDF("cat.urdf",startPos, startOrientation)
+\end{minted}
+These functions load the plane model positioned at the origin, and loads the
+cat model positioned at $(0,0,10)$, with the default orientation.
+
+
 
 \end{document}

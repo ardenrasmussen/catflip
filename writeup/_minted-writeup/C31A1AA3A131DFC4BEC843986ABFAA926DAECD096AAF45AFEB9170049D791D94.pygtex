@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{physicsClient} \PYG{o}{=} \PYG{n}{p}\PYG{o}{.}\PYG{n}{connect}\PYG{p}{(}\PYG{n}{p}\PYG{o}{.}\PYG{n}{GUI}\PYG{p}{)}
+\PYG{n}{p}\PYG{o}{.}\PYG{n}{setAdditionalSearchPath}\PYG{p}{(}\PYG{n}{pybullet\PYGZus{}data}\PYG{o}{.}\PYG{n}{getDataPath}\PYG{p}{())}
+\PYG{n}{p}\PYG{o}{.}\PYG{n}{setGravity}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{o}{\PYGZhy{}}\PYG{n}{args}\PYG{o}{.}\PYG{n}{g}\PYG{p}{)}
+\PYG{n}{planeId} \PYG{o}{=} \PYG{n}{p}\PYG{o}{.}\PYG{n}{loadURDF}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}plane.urdf\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{cubeStartPos} \PYG{o}{=} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{n}{args}\PYG{o}{.}\PYG{n}{d}\PYG{p}{]}
+\PYG{n}{cubeStartOrientation} \PYG{o}{=} \PYG{n}{p}\PYG{o}{.}\PYG{n}{getQuaternionFromEuler}\PYG{p}{([}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{])}
+\PYG{n}{boxId} \PYG{o}{=} \PYG{n}{p}\PYG{o}{.}\PYG{n}{loadURDF}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}robocat.urdf\PYGZdq{}}\PYG{p}{,}\PYG{n}{cubeStartPos}\PYG{p}{,} \PYG{n}{cubeStartOrientation}\PYG{p}{)}
+\end{Verbatim}

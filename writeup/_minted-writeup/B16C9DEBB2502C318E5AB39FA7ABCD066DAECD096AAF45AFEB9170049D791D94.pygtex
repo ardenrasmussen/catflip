@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+  \PYG{n}{planeId} \PYG{o}{=} \PYG{n}{p}\PYG{o}{.}\PYG{n}{loadURDF}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}plane.urdf\PYGZdq{}}\PYG{p}{)}
+  \PYG{n}{startPos} \PYG{o}{=} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{10}\PYG{p}{]}
+  \PYG{n}{startOrientation} \PYG{o}{=} \PYG{n}{p}\PYG{o}{.}\PYG{n}{getQuaternionFromEuler}\PYG{p}{([}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{])}
+  \PYG{n}{boxId} \PYG{o}{=} \PYG{n}{p}\PYG{o}{.}\PYG{n}{loadURDF}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}cat.urdf\PYGZdq{}}\PYG{p}{,}\PYG{n}{startPos}\PYG{p}{,} \PYG{n}{startOrientation}\PYG{p}{)}
+\end{Verbatim}
