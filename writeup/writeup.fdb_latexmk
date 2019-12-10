@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1575959324 "writeup.tex" "writeup.pdf" "writeup" 1575959325
+["pdflatex"] 1575959649 "writeup.tex" "writeup.pdf" "writeup" 1575959649
   "/dev/null" 1575601839 0 d41d8cd98f00b204e9800998ecf8427e ""
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1572595918 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1572595918 1004 54797486969f23fa377b128694d548df ""
@@ -168,12 +168,20 @@
   "_minted-writeup/D6F65EE0C61A13ABF33F29A8DAE6B5D66DAECD096AAF45AFEB9170049D791D94.pygtex" 1575959324 2742 734e1e7a90347a5cf6d76208896fbfbc ""
   "_minted-writeup/default-pyg-prefix.pygstyle" 1575570837 7889 3ce1fbc763e3e2c748310f4fe31722b6 ""
   "_minted-writeup/default.pygstyle" 1575570837 9275 f200be7fc0b7de2461cca28cb35b1427 ""
-  "figures/example_model.aux" 1575959325 896 17f3ae7a385f859871c82b422265d827 "pdflatex"
-  "figures/example_model.tex" 1575959299 1337 36aea010e06c64d50209fd85b4c2778f ""
-  "writeup.aux" 1575959325 2586 4ac876f981503cc94fa767236b8e35b5 "pdflatex"
-  "writeup.tex" 1575959320 14666 2b84b3d6c3b7225ef96b252d4a072a8f ""
+  "figures/axis.aux" 1575959626 887 1458c32bcab0034069cd84957d3d923b "pdflatex"
+  "figures/axis.tex" 1575959603 1803 49bd1f65c7b2146d81a2b8a17ef8ebfa ""
+  "figures/example_model.aux" 0 -1 0 "pdflatex"
+  "figures/example_model.tex" 1575959473 1337 36aea010e06c64d50209fd85b4c2778f ""
+  "figures/model.aux" 1575959626 1038 6688872f4c7a8a2b9f83533712446a6b "pdflatex"
+  "figures/model.tex" 1575959643 1315 1703994f29eeef11cdd87574c79f4820 ""
+  "writeup.aux" 1575959626 61 730ef05ae341daffa864b8a1de8053fa "pdflatex"
+  "writeup.pyg" 1575959649 654 d6f65ee0c61a13abf33f29a8dae6b5d6 "pdflatex"
+  "writeup.tex" 1575959644 14936 6696df4880b45ec7815b45e9e044152f ""
   (generated)
-  "writeup.pdf"
   "writeup.log"
-  "figures/example_model.aux"
   "writeup.aux"
+  "figures/model.aux"
+  "writeup.pdf"
+  "figures/axis.aux"
+  "writeup.pyg"
+  "figures/example_model.aux"

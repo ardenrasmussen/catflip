@@ -1,0 +1,16 @@
+while i < 1000:
+  p.stepSimulation()
+  if t < step_2:
+    p.setJointMotorControlArray(catId, [0,2], p.POSITION_CONTROL,
+    targetPositions=[(np.pi - theta) / 2.0 * (1 - np.cos(np.pi / step_2 *
+    (t - step_2))),0])
+  elif t < step_3:
+    p.setJointMotorControlArray(catId, [0,2], p.POSITION_CONTROL,
+    targetPositions[(np.pi - theta) * np.cos(phi), (np.pi - theta) * np.sin(phi)])
+    phi += omega(t - step_2) / fps
+  elif t < t_max:
+    p.setJointMotorControlArray(catId, [0,2], p.POSITION_CONTROL,
+    targetPositions=[x/2 * (1 + np.cos(np.pi / dt_3 * (t - step_3))), y/2 * (1
+    + np.cos(np.pi / dt_3 * (t - step_3)))])
+  t += 1.0 / fps
+  i += 1
