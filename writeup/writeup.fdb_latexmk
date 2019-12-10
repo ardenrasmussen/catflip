@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1575954982 "writeup.tex" "writeup.pdf" "writeup" 1575954982
+["pdflatex"] 1575959324 "writeup.tex" "writeup.pdf" "writeup" 1575959325
   "/dev/null" 1575601839 0 d41d8cd98f00b204e9800998ecf8427e ""
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1572595918 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/share/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1572595918 1004 54797486969f23fa377b128694d548df ""
@@ -165,17 +165,15 @@
   "_minted-writeup/81086666C48FE6E750F8969169AD63AA6DAECD096AAF45AFEB9170049D791D94.pygtex" 1575952888 490 fb7431be6442d8f2ceebc8681059d2d2 ""
   "_minted-writeup/884C97743F66416645EAE82E51A22E816DAECD096AAF45AFEB9170049D791D94.pygtex" 1575952888 1237 0e66b456b3ec1dfe01386cb863dcc98e ""
   "_minted-writeup/995F42FE2364C6369F569DED395A8A3D6DAECD096AAF45AFEB9170049D791D94.pygtex" 1575952888 200 41017b812c6dba1fb87053081a815cfd ""
-  "_minted-writeup/EF1B47E45422AD32D3C83237C8BDC9F16DAECD096AAF45AFEB9170049D791D94.pygtex" 1575952993 2740 224d1cf66c878c6b405def8ae7685418 ""
+  "_minted-writeup/D6F65EE0C61A13ABF33F29A8DAE6B5D66DAECD096AAF45AFEB9170049D791D94.pygtex" 1575959324 2742 734e1e7a90347a5cf6d76208896fbfbc ""
   "_minted-writeup/default-pyg-prefix.pygstyle" 1575570837 7889 3ce1fbc763e3e2c748310f4fe31722b6 ""
   "_minted-writeup/default.pygstyle" 1575570837 9275 f200be7fc0b7de2461cca28cb35b1427 ""
-  "figures/example_model.aux" 1575954799 896 17f3ae7a385f859871c82b422265d827 "pdflatex"
-  "figures/example_model.tex" 1575953592 1345 dec486cce728acd14f62e09fd1f1a847 ""
-  "writeup.aux" 1575954799 2586 616080bb0c16440d16f9f1a8c996a78f "pdflatex"
-  "writeup.pyg" 1575954983 652 ef1b47e45422ad32d3c83237c8bdc9f1 "pdflatex"
-  "writeup.tex" 1575954981 13765 c3d69b99c64bca735728b20a87f91cde ""
+  "figures/example_model.aux" 1575959325 896 17f3ae7a385f859871c82b422265d827 "pdflatex"
+  "figures/example_model.tex" 1575959299 1337 36aea010e06c64d50209fd85b4c2778f ""
+  "writeup.aux" 1575959325 2586 4ac876f981503cc94fa767236b8e35b5 "pdflatex"
+  "writeup.tex" 1575959320 14666 2b84b3d6c3b7225ef96b252d4a072a8f ""
   (generated)
-  "writeup.log"
   "writeup.pdf"
+  "writeup.log"
   "figures/example_model.aux"
-  "writeup.pyg"
   "writeup.aux"

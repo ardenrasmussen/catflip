@@ -126,9 +126,9 @@ In particular, if $A$ and $B$ are two solid cylinders of equal density with leng
 \end{figure}
 
 Here we will consider a physical example using our model of a cat, to compute
-all of the neccessary values. We will consider a cat of $\mathtt{mass}=m=1$,
+all of the necessary values. We will consider a cat of $\mathtt{mass}=m=1$,
 $\mathtt{length}=l=1$, radius $\mathtt{radius}=r=0.1$, and maximum angle of
-bend $\theta=\frac{\pi}{4}$. We will also consider the cat to be droped from a
+bend $\theta=\frac{\pi}{4}$. We will also consider the cat to be dropped from a
 height of $10$, and with standard gravity of $-9.8$. The model of this cat is
 depicted in Figure \ref{fig:example_cat}.
 
@@ -153,7 +153,7 @@ compute these to be
      0 & 0 & 0.005
    \end{pmatrix}.
 \end{align*}
-Since both $A$ and $B$ cylinders are identical, then this is the interia tensor
+Since both $A$ and $B$ cylinders are identical, then this is the inertia tensor
 for both of them. The next stage is to compute the moment of inertia in the
 $\vec{y}$ axis.
 \begin{align*}
@@ -163,13 +163,32 @@ Then from our previous computation, we evaluate for the rotational speed of the
 cylinders $\omega$. We compute this as
 \begin{align*}
   \omega=\frac{\pi}{\Delta
-    t\left(1-\frac{2I_{z'z'}}{2I_{yy}}\sin\left(\frac{\theta}{2}\right)\right)}\approx2.2514.
+    t\left(1-\frac{I_{z'z'}}{I_{yy}}\sin\left(\frac{\theta}{2}\right)\right)}\approx2.2514.
 \end{align*}
-This is the rate that each cylinder must rotate at inorder for the full
-rotation to occure.
+This is the rate that each cylinder must rotate at in order for the full
+rotation to occurs.
 
 To verify that this rate will work, we compute
-/*TODO*/
+\begin{align*}
+  \int_0^{\Delta
+    t}&\omega\left(1-\frac{I_{z'z'}}{I_{yy}}\sin\left(\frac{\theta}{2}\right)\right)dt\\
+  &=\frac{\pi}{\Delta t}\int_{0}^{\Delta t}dt=\pi.
+\end{align*}
+Now we can compute the maximum amount of torque that the cat would require to
+preform the rotation motion. This is given by
+\begin{align*}
+  \max(\tau_2)=\omega\frac{\pi}{\Delta t}I_*.
+\end{align*}
+We compute $I_*$ by the use of the parallel axis theorem. So we find
+\begin{align*}
+   I_*=I_{x'x'}+md=\frac{m}{12}\left(r^2+l^2\right)+m\frac{h^2}{4}=\frac{m}{12}\left(r^2+4l^2\right)\approx=0.3342.
+\end{align*}
+This is the moment of rotation of the cylinder about its end. Now we can use
+this to compute the maximum torque required.
+\begin{align*}
+  \max(\tau_2)=\omega\frac{\pi}{\Delta t}I_*=\frac{\pi^2I_*}{\Delta
+    t^2\left(1-\frac{I_{z'z'}}{I_{yy}}\sin\left(\frac{\theta}{2}\right)\right)}\approx1.655N.
+\end{align*}
 
 \section{Simulation}%
 \label{sec:simulation}
@@ -186,23 +205,23 @@ python's integrated package manager \texttt{pip}.
 \texttt{pyBullet} makes use of the \texttt{URDF} file format, so all models in
 the simulation must be loaded from a urdf file. This format has some specific
 constraints that are explained here, and the cat model that we used is
-included. The urdf file type is a subset of xml.
+included. The urdf file type is a subset of XML.
 
 The model is constructed with \texttt{links} and \texttt{joints}, and the
-entier format is contained within a \texttt{robot} object.
+entire format is contained within a \texttt{robot} object.
 
 \subsubsection{Link}%
 \label{ssub:Link}
 
 The link object can contains three sub objects, \texttt{visual}
-\texttt{collision}, and \texttt{intertial}. The visual and collision objects,
+\texttt{collision}, and \texttt{inertial}. The visual and collision objects,
 can define a \texttt{geometry}, which can in turn be constructed from a few
-selected primatives. And they can also define an \texttt{origin} object. The
-geometry is used to determin the visual display, or the collision geometry
+selected primitives. And they can also define an \texttt{origin} object. The
+geometry is used to determine the visual display, or the collision geometry
 accordingly, and the origin object defines the orientation and the position of
 the link relative to the robots origin.
 
-The \texttt{inertial} object can define the componets mass, and its inertial
+The \texttt{inertial} object can define the components mass, and its inertial
 tensor, along with the origin for the inertial computation. For most purposes
 the origins for all three of these components can be the same, and the geometry
 of the visual and collision components can also be the same.
@@ -265,10 +284,10 @@ cat model positioned at $(0,0,10)$, with the default orientation.
 \label{sub:simulation_computation}
 
 With our our organization of the simulation, we are able to compute all
-neccesary values prior to the executation of the simulation. This process is
-implementing the equations that we found priviously, and computing their
+necessary values prior to the execution of the simulation. This process is
+implementing the equations that we found previously, and computing their
 numerical values for the provided model of the cat. The first stage is
-computing the time that the cat has to preform the menuver, and partitioning
+computing the time that the cat has to preform the maneuver, and partitioning
 that time for the three different stages of the motion.
 \begin{minted}{python}
   t_max = np.sqrt(2 * 10 / 9.8)
@@ -300,7 +319,7 @@ the rate of rotation.
 \label{sub:simulation_execution}
 
 Now with all the components of the simulation constructed, we are able to run
-the simulation. The entire code is presented below, and we will explane the
+the simulation. The entire code is presented below, and we will explain the
 three stages of execution afterwards.
 
 \begin{minted}{python}
@@ -311,19 +330,19 @@ while i < 1000:
     targetPositions=[(np.pi - theta) / 2.0 * (1 - np.cos(np.pi / step_2 *
     (t - step_2))),0])
   elif t < step_3:
-    p.setJointMotorControlArray(catId, [0,2], p.POSITION_CONROL,
+    p.setJointMotorControlArray(catId, [0,2], p.POSITION_CONTROL,
     targetPositions[(np.pi - theta) * np.cos(phi), (np.pi - theta) * np.sin(phi)])
     phi += omega(t - step_2) / fps
   elif t < t_max:
-    p.setJointMotorControlArray(catId, [0,2], p.POSITION_CONROL,
+    p.setJointMotorControlArray(catId, [0,2], p.POSITION_CONTROL,
     targetPositions=[x/2 * (1 + np.cos(np.pi / dt_3 * (t - step_3))), y/2 * (1
     + np.cos(np.pi / dt_3 * (t - step_3)))])
   t += 1.0 / fps
   i += 1
 \end{minted}
 The simulation can be broken into three steps. The first is the process of
-bending the straight cat into the partialy bent position. Then the next stage
-is the rotational motion, which results in the reorientation. THen the final
+bending the straight cat into the partially bent position. Then the next stage
+is the rotational motion, which results in the reorientation. Then the final
 stage is the straightening of the cat.
 
 
