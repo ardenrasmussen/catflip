@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+  \PYG{n}{ix} \PYG{o}{=} \PYG{l+m+mi}{1}\PYG{o}{/}\PYG{l+m+mi}{12} \PYG{o}{*} \PYG{n}{mass} \PYG{o}{*} \PYG{p}{(}\PYG{n}{radius}\PYG{o}{**}\PYG{l+m+mi}{2} \PYG{o}{+} \PYG{n}{length}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{)}
+  \PYG{n}{iy} \PYG{o}{=} \PYG{l+m+mi}{1}\PYG{o}{/}\PYG{l+m+mi}{12} \PYG{o}{*} \PYG{n}{mass} \PYG{o}{*} \PYG{p}{(}\PYG{n}{radius}\PYG{o}{**}\PYG{l+m+mi}{2} \PYG{o}{+} \PYG{n}{length}\PYG{o}{**}\PYG{l+m+mi}{2}\PYG{p}{)}
+  \PYG{n}{iy} \PYG{o}{=} \PYG{l+m+mi}{1}\PYG{o}{/}\PYG{l+m+mi}{2} \PYG{o}{*} \PYG{n}{mass} \PYG{o}{*} \PYG{n}{radius}\PYG{o}{**}\PYG{l+m+mi}{2}
+  \PYG{n}{ic} \PYG{o}{=} \PYG{n}{iy} \PYG{o}{*} \PYG{n}{np}\PYG{o}{.}\PYG{n}{cos}\PYG{p}{(}\PYG{n}{theta} \PYG{o}{/} \PYG{l+m+mf}{2.0}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2} \PYG{o}{+} \PYG{n}{iz} \PYG{o}{*} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sin}\PYG{p}{(}\PYG{n}{theta} \PYG{o}{/} \PYG{l+m+mf}{2.0}\PYG{p}{)}\PYG{o}{**}\PYG{l+m+mi}{2}
+  \PYG{n}{c} \PYG{o}{=} \PYG{l+m+mi}{1} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{2} \PYG{o}{*} \PYG{n}{iz} \PYG{o}{/} \PYG{p}{(}\PYG{l+m+mi}{2} \PYG{o}{*} \PYG{n}{ic}\PYG{p}{)} \PYG{o}{*} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sin}\PYG{p}{(}\PYG{n}{theta} \PYG{o}{/} \PYG{l+m+mf}{2.0}\PYG{p}{)}
+\end{Verbatim}
