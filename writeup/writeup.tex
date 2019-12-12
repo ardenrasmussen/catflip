@@ -13,6 +13,7 @@
 \newtheorem{claim}[theorem]{Claim}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{corollary}[theorem]{Corollary}
+\newcommand{\deriv}[2]{\frac{d#1}{d#2}}
 
 \newcommand{\AxisRotator}[1][rotate=0]{\tikz[x=0.25cm,y=0.60cm,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);}
 \newcommand{\AxisRotatorUnder}[1][rotate=0]{\tikz[x=0.25cm,y=0.60cm,-stealth,#1]
@@ -24,22 +25,26 @@
 \author{Arden, Sean, and Will}
 \maketitle
 
-\begin{figure}[htpb]
-  \centering
-  \include{figures/axis}
-  \caption{??? PLACE THIS SOMEWHERE}%
-  \label{fig:cat_axis}
-\end{figure}
+\section{Introduction}
+In this document we explore the mathematical framework surrounding our cat model, provide details about the physics simulation we used, and recount mathematical formulations used in our code. We begin ,in the first section, by proving that our axis of rotation is a principle axis, then move on to calculate the moment of inertia and verify that our model truly does have zero angular momentum. In the next section we detail our code, giving a run down of the simulation. And the final section includes how we smoothed our angular velocity function and a computation solving for the initial angle needed for our model to perform a complete rotation. 
 
 \begin{figure}[htpb]
   \centering
   \include{figures/model}
-  \caption{??? PLACE THIS SOMEWHERE}%
-  \label{fig:cat_model}
+  \caption{The model of a cat, and the variable parameters.}%
+  \label{fig:model}
 \end{figure}
 
 \section{Moment of Inertia of the Cat}
 We model a falling cat with two cylinders $A$ and $B$ connected by a spherical joint (which we assume to be massless) with $A$ and $B$ separated by angle $\theta$.
+
+\begin{figure}[htpb]
+  \centering
+  \include{figures/axis}
+  \caption{The coordinate axis that we define for our computations.}%
+  \label{fig:axis}
+\end{figure}
+
 
 \begin{claim}
   About the center of mass, the $y$ axis of the cat is principle. Further, we can write $\vec{L} = (2I_{yy})\omega_y\hat{y}$. For an $I_{yy}$ dependent on the geometry of the cylinders and $\theta$.
@@ -121,88 +126,156 @@ Then overall we have a simple relationship between the angular momentum of the c
 \begin{equation}
   \vec{L} = (I_{y'y'} \cos^2(\theta/2) + I_{z'z'} \sin^2(\theta/2))\omega \hat{y}
 \end{equation}
-In particular, if $A$ and $B$ are two solid cylinders of equal density with length $L$ and radius $R$, we have
+In particular, if $A$ and $B$ are two solid cylinders of equal density with length $L$, radius $R$, and mass $M$ we have
 
 \begin{equation}
-  \vec{L} = (/**/)
+  \vec{L} = \left(\left( \frac{1}{4} MR^2 + \frac{1}{12} ML^2 \right) \cos^2(\theta/2) + \frac{1}{2} MR^2 \sin^2(\theta/2)\right) \omega \hat{y}
 \end{equation}
 
-\section{????}
 
-\section{Numerical Example}%
-\label{sec:numerical_example}
-
-\begin{figure}[htpb]
-  \centering
-  \include{figures/example_model}
-  \caption{Specific model of cat for example}%
-  \label{fig:example_cat}
-\end{figure}
-
-Here we will consider a physical example using our model of a cat, to compute
-all of the necessary values. We will consider a cat of $\mathtt{mass}=m=1$,
-$\mathtt{length}=l=1$, radius $\mathtt{radius}=r=0.1$, and maximum angle of
-bend $\theta=\frac{\pi}{4}$. We will also consider the cat to be dropped from a
-height of $10$, and with standard gravity of $-9.8$. The model of this cat is
-depicted in Figure \ref{fig:example_cat}.
-
-The first step is to compute the time that the cat has to do the rotation. We
-find this simply using basic kinematics
+\section{Note on stability}
+The cat rotates about $y$ axis, but if this axis is unstable, the cat with have difficulty performing this turn. So, we must check the conditions under which the rotation axis is stable. Note that we have the following principle axis values (found in the same way we get $I_{yy}$ above).
 \begin{align*}
-  \Delta t = \sqrt{\frac{2h}{g}}=\sqrt{\frac{2\cdot 10}{9.8}}\approx 1.428.
+  I_{xx} &= I_{x'x'}\\
+  I_{yy} &= I_{y'y'}\cos^2(\theta/2) + I_{z'z'}\sin^2(\theta/2)\\
+  I_{zz} &= I_{y'y'}\sin^2(\theta/2) + I_{z'z'}\cos^2(\theta/2)
 \end{align*}
 
-Next we will also compute the moment of inertia $I$, and to compute this
-we require the inertia tensor for each of the cylinders individually. So we
-compute these to be
+Assuming the cylindrical model and a sufficiently large length we can assume $I_{x'x'} = I_{y'y'} > I_{z'z'}$. But then, we have that
 \begin{align*}
-   \begin{pmatrix}
-     \frac{m}{12}\left(r^2+l^2\right) & 0 & 0\\
-     0 & \frac{m}{12}\left(r^2+l^2\right) & 0\\
-     0 & 0 & \frac{mr^2}{2}
-   \end{pmatrix}\approx
-   \begin{pmatrix}
-     0.084 & 0 & 0\\
-     0 & 0.084 & 0\\
-     0 & 0 & 0.005
-   \end{pmatrix}.
+  I_{yy} = I_{y'y'}\cos^2(\theta/2) + I_{z'z'}\sin^2(\theta/2) < I_{x'x'}\cos^2(\theta/2) + I_{x'x'}\sin^2(\theta/2) = I_{x'x'} = I_{xx}.
 \end{align*}
-Since both $A$ and $B$ cylinders are identical, then this is the inertia tensor
-for both of them. The next stage is to compute the moment of inertia in the
-$\vec{y}$ axis.
+So, $I_{yy} > I_{xx}$ and by the same reasoning, $I_{zz} > I_{xx}$. Additionally, if we have $\pi \leq \theta \leq \pi/2$, then by the combination of $\sin(\theta/2) \leq \cos(\theta/2)$, $I_{z'z'} < I_{y'y'}$, and the rearrangment inequality to conclude that
 \begin{align*}
-   I_{yy}=I_{y'y'}\cos^2\left(\frac{\theta}{2}\right)+I_{z'z'}\sin^2\left(\frac{\theta}{2}\right)\approx0.071841+0.000732\approx0.0726.
+  I_{yy} = I_{y'y'}\cos^2(\theta/2) + I_{z'z'}\sin^2(\theta/2)
+  \leq I_{y'y'}\sin^2(\theta/2) + I_{z'z'}\cos^2(\theta/2) = I_{zz}
 \end{align*}
-Then from our previous computation, we evaluate for the rotational speed of the
-cylinders $\omega$. We compute this as
-\begin{align*}
-  \omega=\frac{\pi}{\Delta
-    t\left(1-\frac{I_{z'z'}}{I_{yy}}\sin\left(\frac{\theta}{2}\right)\right)}\approx2.2514.
-\end{align*}
-This is the rate that each cylinder must rotate at in order for the full
-rotation to occurs.
+And so we conclude that with a sufficiently large length and with $\pi \leq \theta \leq \pi/2$ we have that $I_{yy} \leq I_{zz} < I_{xx}$, making $I_{yy}$ not the intermediate axis and thus a stable axis.
 
-To verify that this rate will work, we compute
+Specificially, a ``sufficiently large length'' is exactly when $L \geq \sqrt{3}R$ for then assuming cylinders of length $L$, radius $R$, and mass $M$ we get that
+
 \begin{align*}
-  \int_0^{\Delta
-    t}&\omega\left(1-\frac{I_{z'z'}}{I_{yy}}\sin\left(\frac{\theta}{2}\right)\right)dt\\
-  &=\frac{\pi}{\Delta t}\int_{0}^{\Delta t}dt=\pi.
+  I_{z'z'} &= \frac{1}{2} MR^2 = \frac{1}{4} MR^2 + \frac{1}{2} MR^2 \leq \frac{1}{4} MR^2 + \frac{1}{2} M \left( \frac{L}{\sqrt{3}} \right)^2 \\
+  &= \frac{1}{4} MR^2 + \frac{1}{12} ML^2 = I_{x'x'}
 \end{align*}
-Now we can compute the maximum amount of torque that the cat would require to
-preform the rotation motion. This is given by
-\begin{align*}
-  \max(\tau_2)=\omega\frac{\pi}{\Delta t}I_*.
-\end{align*}
-We compute $I_*$ by the use of the parallel axis theorem. So we find
-\begin{align*}
-   I_*=I_{x'x'}+md=\frac{m}{12}\left(r^2+l^2\right)+m\frac{h^2}{4}=\frac{m}{12}\left(r^2+4l^2\right)\approx=0.3342.
-\end{align*}
-This is the moment of rotation of the cylinder about its end. Now we can use
-this to compute the maximum torque required.
-\begin{align*}
-  \max(\tau_2)=\omega\frac{\pi}{\Delta t}I_*=\frac{\pi^2I_*}{\Delta
-    t^2\left(1-\frac{I_{z'z'}}{I_{yy}}\sin\left(\frac{\theta}{2}\right)\right)}\approx1.655N.
-\end{align*}
+which gives the assumption given earlier. So, both setting $\theta < \pi/2$ and $L < \sqrt{3}R$ could lead to issues with stability.
+
+\section{The Angular Velocity of Cylinders}
+
+Given the result of our minor project paper,
+\begin{equation*}
+  \text{ Let }\mathcal{C} = 1-2 \frac{I_{zz}}{I_{cc}} \sin(\theta/2)
+\end{equation*}
+
+While we solved for $\omega_0$ as a specific value, we have the freedom for
+$\omega_0$ to vary as a function of time. In general, we can have the function
+$\omega(t)$. Note that $\mathcal{C}$ is constant in time, so we only require
+that
+\begin{equation*}
+  \pi = \int \deriv{\phi}{t} dt = \mathcal{C} \int \omega(t) dt
+\end{equation*}
+In other words, we can have any function $\omega(t)$ so long as
+\begin{equation*}
+  \int \omega(t) dt = \frac{\pi}{\mathcal{C}} = \omega_0 T
+\end{equation*}
+where $T$ is the total time taken in the reorientation process.
+
+We take of advantage of the previously described freedom over $\omega(t)$ to ensure continuity of angular velocity and angular acceleration throughout the reorientation maneuver. In particular for the purpose of the simulation we choose the function
+\begin{equation*}
+  \omega(t) = \omega_0\left(1-\cos\left( \frac{\pi}{T} t \right) \right)
+\end{equation*}
+Note that upon integration we get $\int \omega(t) dt = \omega_0 T$ as required.
+
+\section{Angular Momentum Calculation}
+We will now demonstrate that our model has a net of zero angular momentum. Refer to the figure above. To compute the overall angular momentum of the body we will begin by calculating the angular momentum of the two respective cylinders. Let $x',y'$, $z'$ $x'', y''$ and $z''$ be the axes shown above \ref{fig:axis}.
+
+\par In finding $\vec{L}_A'$ and $\vec{L}_B''$, we begin by noting that $z'$ is a principle axis for cylinder $A$ and $z''$ is a principle axis for cylinder $B$. To see why this is true remember that the moment of inertia tensor for a cylinder of height $h$ and radius $r$ about its central axis is  
+\begin{equation*}
+I=
+\begin{bmatrix}
+\frac{1}{12} m(3r^2+h^2) & 0 & 0 \\
+0 & \frac{1}{12} m(3r^2+h^2) & 0 \\
+0 & 0 & \frac{1}{2} mr^2
+\end{bmatrix}.
+\end{equation*}
+The matrix above is diagonal so the central axis is a principal axis. Therefore rotation about the central axis $\omega$, direction indicated in the figure \ref{fig:axis}, is given by 
+\begin{equation*}
+    \vec{L_A}' = 
+    \begin{bmatrix}
+    0\\
+    0\\
+    -I_{z' z'}\omega
+    \end{bmatrix}
+    \quad
+    \vec{L_B}'' = 
+    \begin{bmatrix}
+    0\\
+    0\\
+    I_{z'' z''}\omega
+    \end{bmatrix}.
+\end{equation*}
+Next, we move on to calculate the angular momentum of the two cylinders viewed as a single body rotating about the $y$ axis, which we will denote $\vec{L}_C$. In calculating $\vec{L}_C$ we first remember that $y$ is a a principal axis for rotation of the two cylinders viewed as a single body. With this in mind, angular momentum for rotation about the $y$ axis with speed $\omega_c$, direction indicated in the figure \ref{fig:axis}, has the form
+\begin{equation*}
+     \vec{L_C} = 
+    \begin{bmatrix}
+    0\\
+    I_{y y}\omega_c\\
+    0
+    \end{bmatrix}
+\end{equation*}
+$\vec{L_A}''$, $\vec{L_B''}$, and $\vec{L_C}$ are expressed in different bases, our next step is to express $\vec{L_A}$ and $\vec{L_B}$ in terms of the $x,y,z$ basis. Recall that the matrix for negative and positive rotation by $\frac{\theta}{2}$ about the $x$ axis, denoted $R_{-\theta/2}^x$ and $R_{\theta/2}^x$ respectively are given by
+\begin{equation*}
+R_{-\theta/2}^x =
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & \text{cos}(\frac{\theta}{2}) & \text{sin}(\frac{\theta}{2}) \\
+0 & -\text{sin}(\frac{\theta}{2}) & \text{cos}(\frac{\theta}{2})
+\end{bmatrix}
+    R_{\theta/2}^x =
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & \text{cos}(\frac{\theta}{2}) & -\text{sin}(\frac{\theta}{2}) \\
+0 & \text{sin}(\frac{\theta}{2}) & \text{cos}(\frac{\theta}{2})
+\end{bmatrix}.
+\end{equation*}
+Using the matrices above we can compute $\vec{L}_A$($\vec{L}_A'$ in the $x,y,z$ basis) and $\vec{L}_B$($\vec{L}_B''$ in the $x,y,z$ basis). Along with the information that $I_{zz} = I_{z'z'} = I_{z''z''}$, we have
+\begin{equation*}
+    \vec{L_A} = 
+    \begin{bmatrix}
+    0\\
+    \text{sin}(\theta /2)I_{z z}\omega\\
+    \text{-cos}(\theta /2)I_{z z}\omega
+    \end{bmatrix}
+    \quad
+    \vec{L_B} = 
+    \begin{bmatrix}
+    0\\
+    \text{sin}(\theta /2)I_{z z}\omega\\
+    \text{cos}(\theta /2)I_{z z}\omega\omega
+    \end{bmatrix}.
+\end{equation*}
+Now we are ready to compute the overall angular momentum of the system. To do so first recall the main outcome of our minor project, $$\omega_c =\omega\left(-2\frac{I_{zz}}{I_{yy}}\sin{\left(\theta/2\right)}\right).$$ Computing $\vec{L}_A + \vec{L}_B +\vec{L}_C$ we obtain
+\begin{equation*}
+    \begin{bmatrix}
+    0\\
+    \text{sin}(\theta /2)I_{z z}\omega\\
+    \text{-cos}(\theta /2)I_{z z}\omega
+    \end{bmatrix}
+    +
+    \begin{bmatrix}
+    0\\
+    \text{sin}(\theta /2)I_{z z}\omega\\
+    \text{cos}(\theta /2)I_{z z}\omega\omega
+    \end{bmatrix}
+    +
+     \begin{bmatrix}
+    0\\
+    \omega\left(-2I_{zz}\sin{\left(\theta/2\right)}\right)\\
+    0
+    \end{bmatrix}
+    =\vec{0}.
+\end{equation*}
+Our model has zero angular momentum.
 
 \section{Simulation}%
 \label{sec:simulation}
@@ -337,20 +410,20 @@ the simulation. The entire code is presented below, and we will explain the
 three stages of execution afterwards.
 
 \begin{minted}{python}
-while i < 1000:
+  while i < 1000:
   p.stepSimulation()
   if t < step_2:
-    p.setJointMotorControlArray(catId, [0,2], p.POSITION_CONTROL,
-    targetPositions=[(np.pi - theta) / 2.0 * (1 - np.cos(np.pi / step_2 *
-    (t - step_2))),0])
+  p.setJointMotorControlArray(catId, [0,2], p.POSITION_CONTROL,
+  targetPositions=[(np.pi - theta) / 2.0 * (1 - np.cos(np.pi / step_2 *
+  (t - step_2))),0])
   elif t < step_3:
-    p.setJointMotorControlArray(catId, [0,2], p.POSITION_CONTROL,
-    targetPositions[(np.pi - theta) * np.cos(phi), (np.pi - theta) * np.sin(phi)])
-    phi += omega(t - step_2) / fps
+  p.setJointMotorControlArray(catId, [0,2], p.POSITION_CONTROL,
+  targetPositions[(np.pi - theta) * np.cos(phi), (np.pi - theta) * np.sin(phi)])
+  phi += omega(t - step_2) / fps
   elif t < t_max:
-    p.setJointMotorControlArray(catId, [0,2], p.POSITION_CONTROL,
-    targetPositions=[x/2 * (1 + np.cos(np.pi / dt_3 * (t - step_3))), y/2 * (1
-    + np.cos(np.pi / dt_3 * (t - step_3)))])
+  p.setJointMotorControlArray(catId, [0,2], p.POSITION_CONTROL,
+  targetPositions=[x/2 * (1 + np.cos(np.pi / dt_3 * (t - step_3))), y/2 * (1
+  + np.cos(np.pi / dt_3 * (t - step_3)))])
   t += 1.0 / fps
   i += 1
 \end{minted}
@@ -358,6 +431,119 @@ The simulation can be broken into three steps. The first is the process of
 bending the straight cat into the partially bent position. Then the next stage
 is the rotational motion, which results in the reorientation. Then the final
 stage is the straightening of the cat.
+
+\section{Numerical Example}%
+\label{sec:numerical_example}
+
+\begin{figure}[htpb]
+  \centering
+  \include{figures/example_model}
+  \caption{Specific model of cat for example}%
+  \label{fig:example_cat}
+\end{figure}
+
+Here we will consider a physical example using our model of a cat, to compute
+all of the necessary values. We will consider a cat of $\mathtt{mass}=m=1$,
+$\mathtt{length}=l=1$, radius $\mathtt{radius}=r=0.1$, and maximum angle of
+bend $\theta=\frac{\pi}{4}$. We will also consider the cat to be dropped from a
+height of $10$, and with standard gravity of $-9.8$. The model of this cat is
+depicted in Figure \ref{fig:example_cat}.
+
+The first step is to compute the time that the cat has to do the rotation. We
+find this simply using basic kinematics
+\begin{align*}
+  \Delta t = \sqrt{\frac{2h}{g}}=\sqrt{\frac{2\cdot 10}{9.8}}\approx 1.428.
+\end{align*}
+
+Next we will also compute the moment of inertia $I$, and to compute this
+we require the inertia tensor for each of the cylinders individually. So we
+compute these to be
+\begin{align*}
+  \begin{pmatrix}
+    \frac{m}{12}\left(r^2+l^2\right) & 0 & 0\\
+    0 & \frac{m}{12}\left(r^2+l^2\right) & 0\\
+    0 & 0 & \frac{mr^2}{2}
+  \end{pmatrix}\approx
+  \begin{pmatrix}
+    0.084 & 0 & 0\\
+    0 & 0.084 & 0\\
+    0 & 0 & 0.005
+  \end{pmatrix}.
+\end{align*}
+Since both $A$ and $B$ cylinders are identical, then this is the inertia tensor
+for both of them. The next stage is to compute the moment of inertia in the
+$\vec{y}$ axis.
+\begin{align*}
+  I_{yy}=I_{y'y'}\cos^2\left(\frac{\theta}{2}\right)+I_{z'z'}\sin^2\left(\frac{\theta}{2}\right)\approx0.071841+0.000732\approx0.0726.
+\end{align*}
+Then from our previous computation, we evaluate for the rotational speed of the
+cylinders $\omega$. We compute this as
+\begin{align*}
+  \omega=\frac{\pi}{\Delta
+    t\left(1-\frac{I_{z'z'}}{I_{yy}}\sin\left(\frac{\theta}{2}\right)\right)}\approx2.2514.
+\end{align*}
+This is the rate that each cylinder must rotate at in order for the full
+rotation to occurs.
+
+To verify that this rate will work, we compute
+\begin{align*}
+  \int_0^{\Delta
+    t}&\omega\left(1-\frac{I_{z'z'}}{I_{yy}}\sin\left(\frac{\theta}{2}\right)\right)dt\\
+  &=\frac{\pi}{\Delta t}\int_{0}^{\Delta t}dt=\pi.
+\end{align*}
+Now we can compute the maximum amount of torque that the cat would require to
+preform the rotation motion. This is given by
+\begin{align*}
+  \max(\tau_2)=\omega\frac{\pi}{\Delta t}I_*.
+\end{align*}
+We compute $I_*$ by the use of the parallel axis theorem. So we find
+\begin{align*}
+  I_*=I_{x'x'}+md=\frac{m}{12}\left(r^2+l^2\right)+m\frac{h^2}{4}=\frac{m}{12}\left(r^2+4l^2\right)\approx=0.3342.
+\end{align*}
+This is the moment of rotation of the cylinder about its end. Now we can use
+this to compute the maximum torque required.
+\begin{align*}
+  \max(\tau_2)=\omega\frac{\pi}{\Delta t}I_*=\frac{\pi^2I_*}{\Delta
+    t^2\left(1-\frac{I_{z'z'}}{I_{yy}}\sin\left(\frac{\theta}{2}\right)\right)}\approx1.655N.
+\end{align*}
+
+\section{Smoothing in the Simulation}
+For each of the three steps in the simulation, we apply a smooth curve to the function $\theta(t)$ to ensure continuity of angular velocity and angular acceleratioin, for the motors in the simulation can only handle a finite torque. Assume the model bends to angle $\theta_0$ and we allow each of the three stages times $T_1, T_2$, and $T_3$ corresponding to the folding, the twisting, and the intwisting respectively. Then, we control the  in the simulation according to functions $\theta_1$, $\omega_2$, $\theta_3$ for each of the respective phases.
+\begin{align*}
+  \theta_1(t) &= \left(\pi- \frac{\theta_0}{2} \right)\left(1-\cos\left( \frac{\pi}{T_1} t \right)\right)\\
+  \omega_2(t) &= \omega_0\left(1-\cos\left( \frac{\pi}{T_2} t \right) \right)\\
+  \theta_3(t) &= \left(\pi- \frac{\theta_0}{2} \right)\left(1+\cos\left( \frac{\pi}{T_3} t \right)\right)\\
+\end{align*}
+
+Additionally, the simulation software requires a provided maximum torque for the motors. A torque too low will prevent the cat from turning and we found a huge torque could be at the cost of precision in the simulation. So, we provide a calculation for placing reasonable bounds on the torque. Let $\tau_1, \tau_2, \tau_3$ denote the torques for each of the three stages. Then each function is given by the following where $I_*$ is the moment of inertia of the cylinder lengthwise about the end of the cylinder. Note this can be calculated by the parallel axis theorem with $I_* = I_{x'x'} + md^2$.
+\begin{equation*}
+  \tau_1 = I_* \ddot\theta_1 \quad\quad \tau_2 = I_* \dot\omega_2 \quad\quad \tau_3 = I_* \ddot{\theta_3}
+\end{equation*}
+We solve for each function and apply $\sin(t) \leq 1$ and $\cos(t) \leq 1$, which gives the maximum of the functions over the appropriate interval, so:
+\begin{equation*}
+  \max(\tau_1) = \frac{\pi^2}{T_1^2} I_* \quad\quad \max(\tau_2) = \omega_0\frac{\pi}{T_2} I_* \quad\quad \max(\tau_3) = \frac{\pi^2}{T_3^2} I_*
+\end{equation*}
+providing the values to set the maximum torque to in each step.
+
+\section{Solving for one-turn $\theta$}
+
+We solve for the $\theta$ between the cylinders such that the cat twists for a full $2\pi$ radians to accomplish a change in orientation of $\pi$ radians. To accomplish this, we more generally consider when $\deriv{\phi}{t} = \omega_0 \alpha$ for some $\alpha \in (0,1)$ and notice that our original question corresponds to the case $\theta = \frac{1}{2}$. Let $\omega_c$ denote the counter rotation and recall $\deriv{\phi}{t} = \omega_c + \omega_0$, so by simple algebra we wish to have $ \frac{\omega_c}{\omega_0} = \frac{1}{\alpha+1}$. Additionally, recall
+\begin{equation*}
+  \omega_c = \frac{2I_{z'z'}}{I_{yy}}\omega_0 \sin\left( \frac{\theta}{2} \right)
+\end{equation*}
+And so the problem reduces to solving for $\theta$ in the following equation: \begin{equation*}
+  1 = (\alpha+1) \frac{2I_{z'z'}}{I_{yy}}\sin\left( \frac{\theta}{2} \right)
+\end{equation*}
+However, $I_{yy}$ is dependent on $\theta$, so we must expand $I_{yy}$ out into the form $I_{yy} = I_{y'y'} \cos^2(\theta/2) + I_{z'z'} \sin^2(\theta/2)$.
+Then by plugging this into the equation, we can convert everything into sines, apply the quadratic formula on $\sin(\theta/2)$ allowing us to solve for $\theta$ as:
+
+\begin{equation*}
+  \theta = 2\arcsin \left( \frac{I_{z'z'}(\alpha+1) + \sqrt{I_{z'z'}^2(\alpha+1)^2-I_{y'y'}(I_{z'z'}-I_{y'y'})}}{(I_{z'z'}-I_{y'y'})} \right)
+\end{equation*}
+
+where the substitution $\alpha = \frac{1}{2}$ gives the one-turn $\theta$.
+
+
 
 
 
